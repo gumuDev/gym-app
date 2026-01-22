@@ -118,18 +118,18 @@
 ## 1.4 Backend - Admin Gym Core (1 semana)
 
 ### Members Routes `/api/members`
-- [ ] `GET /` - Listar members del gym
-- [ ] `POST /` - Crear member (genera código automático)
-- [ ] `GET /:id` - Detalle de member
-- [ ] `PATCH /:id` - Actualizar member
-- [ ] `DELETE /:id` - Desactivar member
-- [ ] `GET /code/:code` - Buscar por código (para QR)
+- [x] `GET /` - Listar members del gym
+- [x] `POST /` - Crear member (genera código automático)
+- [x] `GET /:id` - Detalle de member
+- [x] `PATCH /:id` - Actualizar member
+- [x] `DELETE /:id` - Desactivar member
+- [x] `GET /code/:code` - Buscar por código (para QR)
 
 ### Disciplines Routes `/api/disciplines`
-- [ ] `GET /` - Listar disciplinas
-- [ ] `POST /` - Crear disciplina
-- [ ] `PATCH /:id` - Actualizar
-- [ ] `DELETE /:id` - Desactivar
+- [x] `GET /` - Listar disciplinas
+- [x] `POST /` - Crear disciplina
+- [x] `PATCH /:id` - Actualizar
+- [x] `DELETE /:id` - Desactivar
 
 ### Pricing Routes `/api/pricing`
 - [ ] `GET /` - Listar planes de precios
@@ -147,10 +147,10 @@
 - [ ] `POST /:id/renew` - Renovar membresía
 
 ### Attendances Routes `/api/attendances`
-- [ ] `POST /` - Registrar asistencia (scan QR)
-- [ ] `GET /` - Listar asistencias
-- [ ] `GET /member/:memberId` - Asistencias de un member
-- [ ] `GET /today` - Asistencias de hoy
+- [x] `POST /` - Registrar asistencia (scan QR)
+- [x] `GET /` - Listar asistencias
+- [x] `GET /member/:memberId` - Asistencias de un member
+- [x] `GET /today` - Asistencias de hoy
 
 ### Gym Routes `/api/gyms`
 - [ ] `GET /me` - Info del gym actual

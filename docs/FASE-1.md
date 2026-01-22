@@ -36,33 +36,33 @@
 ## 1.2 Backend - Base de Datos (1 semana)
 
 ### Prisma Schema
-- [ ] Crear modelo `SuperAdmin`
-- [ ] Crear modelo `SaasConfig`
-- [ ] Crear modelo `Gym`
-- [ ] Crear modelo `User`
-- [ ] Crear modelo `Member`
-- [ ] Crear modelo `Discipline`
-- [ ] Crear modelo `PricingPlan`
-- [ ] Crear modelo `Membership`
-- [ ] Crear modelo `Attendance`
-- [ ] Crear modelo `NotificationLog`
-- [ ] Crear modelo `GymInvoice`
-- [ ] Ejecutar primera migración
-- [ ] Crear seed con super admin inicial
+- [x] Crear modelo `SuperAdmin`
+- [x] Crear modelo `SaasConfig`
+- [x] Crear modelo `Gym`
+- [x] Crear modelo `User`
+- [x] Crear modelo `Member`
+- [x] Crear modelo `Discipline`
+- [x] Crear modelo `PricingPlan`
+- [x] Crear modelo `Membership`
+- [x] Crear modelo `Attendance`
+- [x] Crear modelo `NotificationLog`
+- [x] Crear modelo `GymInvoice`
+- [x] Ejecutar primera migración
+- [x] Crear seed con super admin inicial
 
 ### Middlewares
-- [ ] `auth.middleware.ts` - Verificar JWT
-- [ ] `superAdmin.middleware.ts` - Solo super admin
-- [ ] `gym.middleware.ts` - Extraer gymId y filtrar
-- [ ] `role.middleware.ts` - Verificar roles permitidos
-- [ ] `validate.middleware.ts` - Validar con Zod
-- [ ] `error.middleware.ts` - Manejo global de errores
+- [x] `auth.middleware.ts` - Verificar JWT
+- [x] `superAdmin.middleware.ts` - Solo super admin
+- [x] `gym.middleware.ts` - Extraer gymId y filtrar
+- [x] `role.middleware.ts` - Verificar roles permitidos
+- [x] `validate.middleware.ts` - Validar con Zod
+- [x] `error.middleware.ts` - Manejo global de errores
 
 ### Utilidades
-- [ ] `jwt.ts` - Generar y verificar tokens
-- [ ] `hash.ts` - Hash y compare passwords
-- [ ] `codeGenerator.ts` - Generar códigos GYM-001
-- [ ] `responseHelpers.ts` - Respuestas consistentes
+- [x] `jwt.ts` - Generar y verificar tokens
+- [x] `hash.ts` - Hash y compare passwords
+- [x] `codeGenerator.ts` - Generar códigos GYM-001
+- [x] `responseHelpers.ts` - Respuestas consistentes
 
 ---
 

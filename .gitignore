@@ -38,6 +38,9 @@ lerna-debug.log*
 *.sln
 *.sw?
 
+# Claude Code
+.claude/
+
 # Prisma
 prisma/migrations/
 *.db

@@ -1,0 +1,183 @@
+# 📊 Progreso del Proyecto GymApp
+
+**Última actualización:** 2026-01-22
+
+---
+
+## ✅ Completado
+
+### Fase 1.1 - Setup Inicial (COMPLETO)
+- [x] Estructura monorepo (frontend/ y backend/)
+- [x] Frontend: Vite + React 18 + TypeScript + TailwindCSS v3
+- [x] Frontend: Refine configurado con authProvider y dataProvider
+- [x] Backend: Node.js + Express + TypeScript
+- [x] Backend: Prisma ORM instalado
+- [x] Docker Compose para PostgreSQL
+- [x] ESLint y Prettier en ambos proyectos
+- [x] Archivos .env.example
+
+### Fase 1.2 - Backend Base de Datos (COMPLETO)
+- [x] Prisma Schema con 11 modelos
+  - SuperAdmin, SaasConfig, Gym, User, Member
+  - Discipline, PricingPlan, Membership, Attendance
+  - NotificationLog, GymInvoice
+- [x] Primera migración ejecutada
+- [x] Seed con super admin inicial
+- [x] 6 Middlewares creados:
+  - auth.middleware.ts (JWT)
+  - superAdmin.middleware.ts (solo super admins)
+  - gym.middleware.ts (multi-tenancy)
+  - role.middleware.ts (control de roles)
+  - validate.middleware.ts (Zod)
+  - error.middleware.ts (errores globales)
+- [x] 4 Utilidades creadas:
+  - jwt.ts (tokens)
+  - hash.ts (passwords)
+  - codeGenerator.ts (códigos GYM-001)
+  - responseHelpers.ts (respuestas API)
+
+---
+
+## 🔜 Siguiente Fase
+
+### Fase 1.3 - Backend Auth y Super Admin (PENDIENTE)
+
+#### Auth Routes `/api/auth`
+- [ ] `POST /login` - Login super admin y gym users
+- [ ] `POST /login/member` - Login member por código
+- [ ] `POST /refresh` - Refrescar token
+- [ ] `POST /forgot-password` - Solicitar reset
+- [ ] `POST /reset-password` - Cambiar password
+
+#### Auth Service
+- [ ] Validar credenciales
+- [ ] Generar JWT con datos correctos según rol
+- [ ] Manejar refresh tokens
+- [ ] Generar tokens de reset password
+- [ ] Enviar emails de reset
+
+#### Super Admin Routes `/api/super-admin`
+- [ ] `GET /dashboard` - Métricas globales (gyms, members, MRR)
+- [ ] `GET /gyms` - Listar todos los gyms
+- [ ] `POST /gyms` - Crear gym + usuario admin
+- [ ] `GET /gyms/:id` - Detalle de un gym
+- [ ] `PATCH /gyms/:id` - Actualizar gym
+- [ ] `POST /gyms/:id/toggle` - Activar/suspender gym
+- [ ] `GET /invoices` - Ver facturas
+- [ ] `POST /invoices/generate` - Generar facturas mensuales
+
+#### Email Service
+- [ ] Configurar Resend/Nodemailer
+- [ ] Template: Credenciales nuevo gym
+- [ ] Template: Reset password
+- [ ] Función enviar email genérica
+
+---
+
+## 🚀 Para Retomar el Trabajo
+
+### 1. Levantar el entorno:
+
+```bash
+# Terminal 1 - PostgreSQL
+docker-compose up -d
+
+# Terminal 2 - Backend
+cd backend
+npm run dev
+
+# Terminal 3 - Frontend
+cd frontend
+npm run dev
+
+# (Opcional) Prisma Studio para ver la BD
+cd backend
+npm run prisma:studio
+```
+
+### 2. Verificar que todo funciona:
+
+- PostgreSQL: http://localhost:5432
+- Backend: http://localhost:3000/health
+- Frontend: http://localhost:5173
+- Prisma Studio: http://localhost:5555
+
+### 3. Credenciales actuales:
+
+**Super Admin:**
+- Email: `admin@gymapp.com`
+- Password: `admin123`
+
+**PostgreSQL:**
+- User: `gymapp`
+- Password: `gymapp123`
+- Database: `gymapp_dev`
+- Port: `5432`
+
+---
+
+## 📁 Estructura Actual
+
+```
+gym-app/
+├── backend/
+│   ├── prisma/
+│   │   ├── schema.prisma ✅
+│   │   ├── seed.ts ✅
+│   │   └── migrations/ ✅
+│   ├── src/
+│   │   ├── index.ts ✅
+│   │   ├── middlewares/ ✅ (6 archivos)
+│   │   ├── utils/ ✅ (4 archivos)
+│   │   ├── routes/ (pendiente)
+│   │   ├── controllers/ (pendiente)
+│   │   ├── services/ (pendiente)
+│   │   └── validators/ (pendiente)
+│   ├── .env ✅
+│   └── package.json ✅
+├── frontend/
+│   ├── src/
+│   │   ├── App.tsx ✅ (con Refine)
+│   │   ├── providers/ ✅
+│   │   │   ├── authProvider.ts ✅
+│   │   │   └── dataProvider.ts ✅
+│   │   ├── pages/ ✅
+│   │   │   ├── Login.tsx ✅
+│   │   │   └── Dashboard.tsx ✅
+│   │   ├── components/ (pendiente)
+│   │   ├── hooks/ (pendiente)
+│   │   └── utils/ (pendiente)
+│   ├── .env ✅
+│   └── package.json ✅
+├── docker-compose.yml ✅
+├── CLAUDE.md ✅
+├── README.md ✅
+└── docs/
+    ├── FASE-1.md ✅ (actualizado)
+    └── FASE-[2-5].md ✅
+
+```
+
+---
+
+## 📝 Notas Importantes
+
+1. **Multi-tenancy**: Todas las queries deben filtrar por `gym_id` usando el middleware `gym.middleware.ts`
+2. **Autenticación**: 4 tipos de usuarios (super_admin, admin, receptionist, member)
+3. **Convenciones**: Código en inglés, UI en español
+4. **Validación**: Usar Zod en todos los endpoints
+5. **Prisma**: Downgradeado a v5 para estabilidad
+
+---
+
+## 🎯 Próximos Commits Sugeridos
+
+1. **Auth Service + Routes** - Sistema de autenticación completo
+2. **Super Admin Service + Routes** - CRUD de gimnasios
+3. **Email Service** - Envío de notificaciones
+4. **Validators con Zod** - Validaciones para auth y super admin
+
+---
+
+**¡Disfruta tu descanso!** 🎉
+Cuando regreses, continúa con la Fase 1.3 para implementar las rutas de autenticación.

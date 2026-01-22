@@ -8,27 +8,27 @@
 ## 1.1 Setup Inicial (4-5 días)
 
 ### Estructura del Proyecto
-- [ ] Crear carpeta `gym-app/` con estructura monorepo
-- [ ] Crear `frontend/` con Vite + React + TypeScript
-- [ ] Crear `backend/` con Node.js + Express + TypeScript
-- [ ] Configurar TailwindCSS en frontend
-- [ ] Crear `docker-compose.yml` para PostgreSQL local
-- [ ] Configurar archivos `.env.example` en ambos proyectos
-- [ ] Configurar ESLint y Prettier en ambos proyectos
-- [ ] Crear `.gitignore` apropiado
+- [x] Crear carpeta `gym-app/` con estructura monorepo
+- [x] Crear `frontend/` con Vite + React + TypeScript
+- [x] Crear `backend/` con Node.js + Express + TypeScript
+- [x] Configurar TailwindCSS en frontend
+- [x] Crear `docker-compose.yml` para PostgreSQL local
+- [x] Configurar archivos `.env.example` en ambos proyectos
+- [x] Configurar ESLint y Prettier en ambos proyectos
+- [x] Crear `.gitignore` apropiado
 
 ### Frontend Setup
-- [ ] Instalar Refine con data provider REST
+- [x] Instalar Refine con data provider REST
 - [ ] Configurar Axios instance con interceptors
 - [ ] Configurar React Router
 - [ ] Crear estructura de carpetas (pages, components, hooks, utils)
 - [ ] Crear componentes UI base (Button, Input, Card, Modal)
 
 ### Backend Setup
-- [ ] Configurar Express con TypeScript
+- [x] Configurar Express con TypeScript
 - [ ] Configurar Prisma ORM
-- [ ] Crear estructura de carpetas (routes, controllers, services, middlewares)
-- [ ] Configurar CORS, JSON parsing, error handling
+- [x] Crear estructura de carpetas (routes, controllers, services, middlewares)
+- [x] Configurar CORS, JSON parsing, error handling
 - [ ] Crear utilidades (jwt.ts, hash.ts, response helpers)
 
 ---

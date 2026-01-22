@@ -132,19 +132,19 @@
 - [x] `DELETE /:id` - Desactivar
 
 ### Pricing Routes `/api/pricing`
-- [ ] `GET /` - Listar planes de precios
-- [ ] `POST /` - Crear plan
-- [ ] `PATCH /:id` - Actualizar
-- [ ] `DELETE /:id` - Eliminar
-- [ ] `GET /calculate` - Calcular precio (personas, meses)
+- [x] `GET /` - Listar planes de precios
+- [x] `POST /` - Crear plan
+- [x] `PATCH /:id` - Actualizar
+- [x] `DELETE /:id` - Eliminar
+- [x] `GET /calculate` - Calcular precio (personas, meses)
 
 ### Memberships Routes `/api/memberships`
-- [ ] `GET /` - Listar membresías
-- [ ] `POST /` - Crear membresía (registrar pago)
-- [ ] `GET /:id` - Detalle
-- [ ] `GET /member/:memberId` - Membresías de un member
-- [ ] `GET /expiring` - Por vencer (7 días)
-- [ ] `POST /:id/renew` - Renovar membresía
+- [x] `GET /` - Listar membresías
+- [x] `POST /` - Crear membresía (registrar pago)
+- [x] `GET /:id` - Detalle
+- [x] `GET /member/:memberId` - Membresías de un member
+- [x] `GET /expiring` - Por vencer (7 días)
+- [x] `POST /:id/renew` - Renovar membresía
 
 ### Attendances Routes `/api/attendances`
 - [x] `POST /` - Registrar asistencia (scan QR)

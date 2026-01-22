@@ -5,6 +5,9 @@ import dotenv from 'dotenv';
 // Routes
 import authRoutes from './routes/auth.routes';
 import superAdminRoutes from './routes/superAdmin.routes';
+import memberRoutes from './routes/member.routes';
+import disciplineRoutes from './routes/discipline.routes';
+import attendanceRoutes from './routes/attendance.routes';
 
 // Middlewares
 import { errorMiddleware } from './middlewares/error.middleware';
@@ -27,6 +30,9 @@ app.get('/health', (req, res) => {
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/super-admin', superAdminRoutes);
+app.use('/api/members', memberRoutes);
+app.use('/api/disciplines', disciplineRoutes);
+app.use('/api/attendances', attendanceRoutes);
 
 // Error handling middleware (debe ser el último)
 app.use(errorMiddleware);
@@ -35,8 +41,11 @@ app.use(errorMiddleware);
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📍 Health check: http://localhost:${PORT}/health`);
-  console.log(`🔐 Auth endpoints: http://localhost:${PORT}/api/auth`);
-  console.log(`👑 Super Admin endpoints: http://localhost:${PORT}/api/super-admin`);
+  console.log(`🔐 Auth: http://localhost:${PORT}/api/auth`);
+  console.log(`👑 Super Admin: http://localhost:${PORT}/api/super-admin`);
+  console.log(`👥 Members: http://localhost:${PORT}/api/members`);
+  console.log(`🏋️  Disciplines: http://localhost:${PORT}/api/disciplines`);
+  console.log(`📋 Attendances: http://localhost:${PORT}/api/attendances`);
 });
 
 export default app;

@@ -38,39 +38,67 @@
 
 ---
 
+### Fase 1.3 - Backend Auth y Super Admin (COMPLETO)
+- [x] Validators con Zod para auth y gyms
+- [x] Auth Service con login multi-tipo
+- [x] Auth Controller con 5 endpoints
+- [x] Auth Routes completas
+- [x] Super Admin Service con 8 funciones
+- [x] Super Admin Controller con 8 endpoints
+- [x] Super Admin Routes protegidas
+- [x] Testing: Colección de Postman + curl examples
+
+---
+
 ## 🔜 Siguiente Fase
 
-### Fase 1.3 - Backend Auth y Super Admin (PENDIENTE)
+### Fase 1.4 - Backend Admin Gym Core (PENDIENTE)
 
-#### Auth Routes `/api/auth`
-- [ ] `POST /login` - Login super admin y gym users
-- [ ] `POST /login/member` - Login member por código
-- [ ] `POST /refresh` - Refrescar token
-- [ ] `POST /forgot-password` - Solicitar reset
-- [ ] `POST /reset-password` - Cambiar password
+#### Members Routes `/api/members`
+- [ ] `GET /` - Listar members del gym
+- [ ] `POST /` - Crear member (genera código automático)
+- [ ] `GET /:id` - Detalle de member
+- [ ] `PATCH /:id` - Actualizar member
+- [ ] `DELETE /:id` - Desactivar member
+- [ ] `GET /code/:code` - Buscar por código (para QR)
 
-#### Auth Service
-- [ ] Validar credenciales
-- [ ] Generar JWT con datos correctos según rol
-- [ ] Manejar refresh tokens
-- [ ] Generar tokens de reset password
-- [ ] Enviar emails de reset
+#### Disciplines Routes `/api/disciplines`
+- [ ] `GET /` - Listar disciplinas
+- [ ] `POST /` - Crear disciplina
+- [ ] `PATCH /:id` - Actualizar
+- [ ] `DELETE /:id` - Desactivar
 
-#### Super Admin Routes `/api/super-admin`
-- [ ] `GET /dashboard` - Métricas globales (gyms, members, MRR)
-- [ ] `GET /gyms` - Listar todos los gyms
-- [ ] `POST /gyms` - Crear gym + usuario admin
-- [ ] `GET /gyms/:id` - Detalle de un gym
-- [ ] `PATCH /gyms/:id` - Actualizar gym
-- [ ] `POST /gyms/:id/toggle` - Activar/suspender gym
-- [ ] `GET /invoices` - Ver facturas
-- [ ] `POST /invoices/generate` - Generar facturas mensuales
+#### Pricing Routes `/api/pricing`
+- [ ] `GET /` - Listar planes de precios
+- [ ] `POST /` - Crear plan
+- [ ] `PATCH /:id` - Actualizar
+- [ ] `DELETE /:id` - Eliminar
+- [ ] `GET /calculate` - Calcular precio (personas, meses)
 
-#### Email Service
-- [ ] Configurar Resend/Nodemailer
-- [ ] Template: Credenciales nuevo gym
-- [ ] Template: Reset password
-- [ ] Función enviar email genérica
+#### Memberships Routes `/api/memberships`
+- [ ] `GET /` - Listar membresías
+- [ ] `POST /` - Crear membresía (registrar pago)
+- [ ] `GET /:id` - Detalle
+- [ ] `GET /member/:memberId` - Membresías de un member
+- [ ] `GET /expiring` - Por vencer (7 días)
+- [ ] `POST /:id/renew` - Renovar membresía
+
+#### Attendances Routes `/api/attendances`
+- [ ] `POST /` - Registrar asistencia (scan QR)
+- [ ] `GET /` - Listar asistencias
+- [ ] `GET /member/:memberId` - Asistencias de un member
+- [ ] `GET /today` - Asistencias de hoy
+
+#### Gym Routes `/api/gyms`
+- [ ] `GET /me` - Info del gym actual
+- [ ] `PATCH /me` - Actualizar configuración
+- [ ] `POST /me/complete-setup` - Marcar setup completado
+
+#### Users Routes `/api/users`
+- [ ] `GET /` - Listar usuarios del gym
+- [ ] `POST /` - Crear usuario (recepcionista, entrenador)
+- [ ] `PATCH /:id` - Actualizar
+- [ ] `DELETE /:id` - Desactivar
 
 ---
 

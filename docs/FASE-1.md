@@ -84,28 +84,28 @@
 ## 1.3 Backend - Auth y Super Admin (1 semana)
 
 ### Auth Routes `/api/auth`
-- [ ] `POST /login` - Login super admin y gym users
-- [ ] `POST /login/member` - Login member por código
-- [ ] `POST /refresh` - Refrescar token
-- [ ] `POST /forgot-password` - Solicitar reset
-- [ ] `POST /reset-password` - Cambiar password
+- [x] `POST /login` - Login super admin y gym users
+- [x] `POST /login/member` - Login member por código
+- [x] `POST /refresh` - Refrescar token (estructura creada)
+- [x] `POST /forgot-password` - Solicitar reset (estructura creada)
+- [x] `POST /reset-password` - Cambiar password (estructura creada)
 
 ### Auth Service
-- [ ] Validar credenciales
-- [ ] Generar JWT con datos correctos según rol
-- [ ] Manejar refresh tokens
-- [ ] Generar tokens de reset password
-- [ ] Enviar emails de reset
+- [x] Validar credenciales
+- [x] Generar JWT con datos correctos según rol
+- [ ] Manejar refresh tokens (pendiente implementar lógica)
+- [ ] Generar tokens de reset password (pendiente implementar)
+- [ ] Enviar emails de reset (pendiente Email Service)
 
 ### Super Admin Routes `/api/super-admin`
-- [ ] `GET /dashboard` - Métricas globales (gyms, members, MRR)
-- [ ] `GET /gyms` - Listar todos los gyms
-- [ ] `POST /gyms` - Crear gym + usuario admin
-- [ ] `GET /gyms/:id` - Detalle de un gym
-- [ ] `PATCH /gyms/:id` - Actualizar gym
-- [ ] `POST /gyms/:id/toggle` - Activar/suspender gym
-- [ ] `GET /invoices` - Ver facturas
-- [ ] `POST /invoices/generate` - Generar facturas mensuales
+- [x] `GET /dashboard` - Métricas globales (gyms, members, MRR)
+- [x] `GET /gyms` - Listar todos los gyms
+- [x] `POST /gyms` - Crear gym + usuario admin
+- [x] `GET /gyms/:id` - Detalle de un gym
+- [x] `PATCH /gyms/:id` - Actualizar gym
+- [x] `POST /gyms/:id/toggle` - Activar/suspender gym
+- [x] `GET /invoices` - Ver facturas
+- [x] `POST /invoices/generate` - Generar facturas mensuales
 
 ### Email Service
 - [ ] Configurar Resend/Nodemailer

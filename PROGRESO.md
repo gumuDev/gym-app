@@ -1,6 +1,6 @@
 # 📊 Progreso del Proyecto GymApp
 
-**Última actualización:** 2026-01-22 (Fase 1.6 Paso 2, 3 y 4 COMPLETOS: Members + Disciplines + Pricing Plans CRUD)
+**Última actualización:** 2026-01-23 (Fase 1.6 Paso 5 y 6 COMPLETOS: Memberships + Attendances CRUD + QR Scanner)
 
 ---
 
@@ -184,14 +184,22 @@
 - [x] Cálculo automático de precio mensual
 - [x] Seed corregido para usar UUIDs válidos
 
-#### Paso 5: Memberships CRUD (PENDIENTE)
-- [ ] Memberships List
-- [ ] Memberships Create con calculadora
-- [ ] Memberships Renew
+#### Paso 5: Memberships CRUD (COMPLETO ✅)
+- [x] Memberships List con filtros (Todas, Activas, Por Vencer, Vencidas)
+- [x] Memberships Create con wizard de 4 pasos (nuevo/existente member)
+- [x] Memberships Edit (vista de detalle con acciones)
+- [x] Memberships Renew con selección de planes
+- [x] Métodos de pago: QR y Efectivo
+- [x] Diseño responsive con 2 columnas en desktop (sin scroll vertical)
+- [x] Flujo completo de creación incluyendo nuevo member
 
-#### Paso 6: Attendances + QR Scanner (PENDIENTE)
-- [ ] Attendances List
-- [ ] QR Scanner con cámara
+#### Paso 6: Attendances + QR Scanner (COMPLETO ✅)
+- [x] Attendances List con filtros (Hoy, Semana, Mes, Todas)
+- [x] QR Scanner con html5-qrcode
+- [x] Registro de asistencia con validación de membresía activa
+- [x] Alertas para membresías por vencer (7 días)
+- [x] Vista de información del member al escanear
+- [x] Diseño responsive mobile-first
 
 #### Paso 7: Settings (PENDIENTE)
 - [ ] Configuración del gym
@@ -200,12 +208,11 @@
 
 ## 🔜 Siguiente Paso
 
-**Fase 1.6 - Paso 5: Memberships CRUD para Admin Gym**
-- [ ] Memberships List (tabla responsive con filtros)
-- [ ] Memberships Create con selección de disciplina + plan
-- [ ] Memberships Renew (renovación de membresías)
-- [ ] Integración con backend `/api/memberships`
-- [ ] Filtros por estado (activas, vencidas, por vencer)
+**Fase 1.6 - Paso 7: Settings (Configuración del Gym)**
+- [ ] Gym Settings - Ver y editar información del gimnasio
+- [ ] Cambiar contraseña del administrador
+- [ ] Configuración de Telegram Bot (opcional)
+- [ ] Logo del gimnasio (upload a Cloudinary)
 
 ---
 

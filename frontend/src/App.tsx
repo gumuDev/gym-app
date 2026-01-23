@@ -27,6 +27,12 @@ import { DisciplinesEdit } from './pages/admin-gym/disciplines/edit';
 import { PricingList } from './pages/admin-gym/pricing/list';
 import { PricingCreate } from './pages/admin-gym/pricing/create';
 import { PricingEdit } from './pages/admin-gym/pricing/edit';
+import { MembershipsList } from './pages/admin-gym/memberships/list';
+import { MembershipsCreate } from './pages/admin-gym/memberships/create';
+import { MembershipsEdit } from './pages/admin-gym/memberships/edit';
+import { MembershipsRenew } from './pages/admin-gym/memberships/renew';
+import { AttendancesList } from './pages/admin-gym/attendances/list';
+import { AttendancesScanner } from './pages/admin-gym/attendances/scanner';
 
 function App() {
   return (
@@ -70,7 +76,7 @@ function App() {
             name: 'admin-gym/memberships',
             list: '/admin-gym/memberships',
             create: '/admin-gym/memberships/create',
-            show: '/admin-gym/memberships/show/:id',
+            edit: '/admin-gym/memberships/edit/:id',
           },
           {
             name: 'admin-gym/attendances',
@@ -107,6 +113,12 @@ function App() {
             <Route path="pricing" element={<PricingList />} />
             <Route path="pricing/create" element={<PricingCreate />} />
             <Route path="pricing/edit/:id" element={<PricingEdit />} />
+            <Route path="memberships" element={<MembershipsList />} />
+            <Route path="memberships/create" element={<MembershipsCreate />} />
+            <Route path="memberships/edit/:id" element={<MembershipsEdit />} />
+            <Route path="memberships/renew/:id" element={<MembershipsRenew />} />
+            <Route path="attendances" element={<AttendancesList />} />
+            <Route path="attendances/scanner" element={<AttendancesScanner />} />
           </Route>
 
           {/* Default Routes */}

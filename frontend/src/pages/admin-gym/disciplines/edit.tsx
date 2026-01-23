@@ -33,8 +33,8 @@ export const DisciplinesEdit = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        // El interceptor ya transformó la respuesta
-        const disciplines = Array.isArray(response.data) ? response.data : response.data.data || [];
+        // Backend devuelve { success, data }
+        const disciplines = response.data.data || [];
 
         // Buscar la disciplina por id
         const discipline = disciplines.find((d: any) => d.id === id);

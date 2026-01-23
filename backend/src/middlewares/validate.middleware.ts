@@ -17,7 +17,7 @@ export const validateMiddleware = (schema: AnyZodObject) => {
       next();
     } catch (error) {
       if (error instanceof ZodError) {
-        const formattedErrors = error.errors.map(err => ({
+        const formattedErrors = (error.issues || []).map(err => ({
           path: err.path.join('.'),
           message: err.message,
         }));
@@ -26,6 +26,8 @@ export const validateMiddleware = (schema: AnyZodObject) => {
         return;
       }
 
+      // Error inesperado en validación
+      console.error('Validation middleware error:', error);
       next(error);
     }
   };

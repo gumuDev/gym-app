@@ -42,8 +42,8 @@ export const PricingCreate = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        // El interceptor ya transformó la respuesta, así que response.data es el array directamente
-        const allDisciplines = Array.isArray(response.data) ? response.data : response.data.data || [];
+        // Backend devuelve { success, data }
+        const allDisciplines = response.data.data || [];
 
         // Filtrar solo disciplinas activas
         const activeDisciplines = allDisciplines.filter((d: Discipline) => d.is_active);
@@ -62,7 +62,8 @@ export const PricingCreate = () => {
     };
 
     fetchDisciplines();
-  }, [push]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleChange = (field: keyof CreatePricingForm, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));

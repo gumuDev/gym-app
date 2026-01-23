@@ -76,20 +76,28 @@ async function main() {
   // Crear algunas disciplinas de prueba
   const disciplines = await Promise.all([
     prisma.discipline.upsert({
-      where: { id: 'discipline-1' },
+      where: {
+        gym_id_name: {
+          gym_id: testGym.id,
+          name: 'Crossfit',
+        },
+      },
       update: {},
       create: {
-        id: 'discipline-1',
         name: 'Crossfit',
         description: 'Entrenamiento funcional de alta intensidad',
         gym_id: testGym.id,
       },
     }),
     prisma.discipline.upsert({
-      where: { id: 'discipline-2' },
+      where: {
+        gym_id_name: {
+          gym_id: testGym.id,
+          name: 'Musculación',
+        },
+      },
       update: {},
       create: {
-        id: 'discipline-2',
         name: 'Musculación',
         description: 'Entrenamiento con pesas',
         gym_id: testGym.id,

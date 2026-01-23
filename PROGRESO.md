@@ -1,6 +1,6 @@
 # 📊 Progreso del Proyecto GymApp
 
-**Última actualización:** 2026-01-22 (Fase 1.5 y 1.6 Paso 1 COMPLETOS: Super Admin + Admin Gym Dashboard + Diseño Responsive)
+**Última actualización:** 2026-01-22 (Fase 1.6 Paso 2, 3 y 4 COMPLETOS: Members + Disciplines + Pricing Plans CRUD)
 
 ---
 
@@ -165,13 +165,24 @@
 - [x] Estadísticas (membresías, asistencias)
 - [x] Navegación fluida entre vistas
 
-#### Paso 3: Disciplines CRUD (PENDIENTE)
-- [ ] Disciplines List
-- [ ] Disciplines Create/Edit
+#### Paso 3: Disciplines CRUD (COMPLETO ✅)
+- [x] Disciplines List con tabla responsive y cards mobile
+- [x] Disciplines Create con formulario responsive
+- [x] Disciplines Edit con formulario pre-cargado
+- [x] Toggle activar/desactivar desde lista
+- [x] Integración completa con backend `/api/disciplines`
+- [x] Diseño responsive mobile-first
+- [x] Contador de planes y membresías por disciplina
 
-#### Paso 4: Pricing Plans CRUD (PENDIENTE)
-- [ ] Pricing List
-- [ ] Pricing Create con calculadora
+#### Paso 4: Pricing Plans CRUD (COMPLETO ✅)
+- [x] Pricing List agrupada por disciplina
+- [x] Pricing Create con selección de disciplina
+- [x] Pricing Edit para actualizar precios
+- [x] Vista previa del plan en tiempo real
+- [x] Validación de datos con Zod
+- [x] Diseño responsive mobile-first
+- [x] Cálculo automático de precio mensual
+- [x] Seed corregido para usar UUIDs válidos
 
 #### Paso 5: Memberships CRUD (PENDIENTE)
 - [ ] Memberships List
@@ -189,11 +200,12 @@
 
 ## 🔜 Siguiente Paso
 
-**Fase 1.6 - Paso 3: Disciplines CRUD para Admin Gym**
-- [ ] Disciplines List (tabla responsive + cards mobile)
-- [ ] Disciplines Create/Edit (formulario con nombre y descripción)
-- [ ] Toggle activar/desactivar disciplinas
-- [ ] Integración con backend `/api/disciplines`
+**Fase 1.6 - Paso 5: Memberships CRUD para Admin Gym**
+- [ ] Memberships List (tabla responsive con filtros)
+- [ ] Memberships Create con selección de disciplina + plan
+- [ ] Memberships Renew (renovación de membresías)
+- [ ] Integración con backend `/api/memberships`
+- [ ] Filtros por estado (activas, vencidas, por vencer)
 
 ---
 

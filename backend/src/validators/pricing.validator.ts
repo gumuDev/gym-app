@@ -6,9 +6,9 @@ import { z } from 'zod';
 export const createPricingPlanSchema = z.object({
   body: z.object({
     discipline_id: z.string().uuid('discipline_id debe ser un UUID válido'),
-    num_people: z.number().int().min(1, 'Mínimo 1 persona'),
-    num_months: z.number().int().min(1, 'Mínimo 1 mes'),
-    price: z.number().positive('Precio debe ser positivo'),
+    num_people: z.coerce.number().int().min(1, 'Mínimo 1 persona'),
+    num_months: z.coerce.number().int().min(1, 'Mínimo 1 mes'),
+    price: z.coerce.number().positive('Precio debe ser positivo'),
   }),
 });
 
@@ -20,7 +20,7 @@ export const updatePricingPlanSchema = z.object({
     id: z.string().uuid('ID debe ser un UUID válido'),
   }),
   body: z.object({
-    price: z.number().positive('Precio debe ser positivo'),
+    price: z.coerce.number().positive('Precio debe ser positivo'),
   }),
 });
 

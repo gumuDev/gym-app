@@ -49,3 +49,17 @@ export const toggleGymSchema = z.object({
     id: z.string().uuid('ID debe ser un UUID válido'),
   }),
 });
+
+/**
+ * Validator para actualizar el gym actual (admin-gym)
+ */
+export const updateMyGymSchema = z.object({
+  body: z.object({
+    name: z.string().min(3).optional(),
+    email: z.string().email().optional(),
+    phone: z.string().optional(),
+    address: z.string().optional(),
+    logo_url: z.string().url().optional(),
+    telegram_bot_token: z.string().optional(),
+  }),
+});

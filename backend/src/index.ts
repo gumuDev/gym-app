@@ -10,6 +10,7 @@ import disciplineRoutes from './routes/discipline.routes';
 import attendanceRoutes from './routes/attendance.routes';
 import pricingRoutes from './routes/pricing.routes';
 import membershipRoutes from './routes/membership.routes';
+import gymRoutes from './routes/gym.routes';
 
 // Middlewares
 import { errorMiddleware } from './middlewares/error.middleware';
@@ -37,6 +38,7 @@ app.use('/api/disciplines', disciplineRoutes);
 app.use('/api/attendances', attendanceRoutes);
 app.use('/api/pricing', pricingRoutes);
 app.use('/api/memberships', membershipRoutes);
+app.use('/api/gyms', gymRoutes);
 
 // Error handling middleware (debe ser el último)
 app.use(errorMiddleware);
@@ -52,6 +54,7 @@ app.listen(PORT, () => {
   console.log(`📋 Attendances: http://localhost:${PORT}/api/attendances`);
   console.log(`💰 Pricing: http://localhost:${PORT}/api/pricing`);
   console.log(`🎫 Memberships: http://localhost:${PORT}/api/memberships`);
+  console.log(`🏢 Gyms: http://localhost:${PORT}/api/gyms`);
 });
 
 export default app;

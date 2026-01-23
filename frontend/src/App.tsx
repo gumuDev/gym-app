@@ -33,6 +33,7 @@ import { MembershipsEdit } from './pages/admin-gym/memberships/edit';
 import { MembershipsRenew } from './pages/admin-gym/memberships/renew';
 import { AttendancesList } from './pages/admin-gym/attendances/list';
 import { AttendancesScanner } from './pages/admin-gym/attendances/scanner';
+import { Settings } from './pages/admin-gym/settings';
 
 function App() {
   return (
@@ -82,6 +83,10 @@ function App() {
             name: 'admin-gym/attendances',
             list: '/admin-gym/attendances',
           },
+          {
+            name: 'admin-gym/settings',
+            list: '/admin-gym/settings',
+          },
         ]}
         options={{
           syncWithLocation: true,
@@ -119,6 +124,7 @@ function App() {
             <Route path="memberships/renew/:id" element={<MembershipsRenew />} />
             <Route path="attendances" element={<AttendancesList />} />
             <Route path="attendances/scanner" element={<AttendancesScanner />} />
+            <Route path="settings" element={<Settings />} />
           </Route>
 
           {/* Default Routes */}

@@ -153,12 +153,17 @@
 - ✅ Texto truncado para evitar overflow
 - ✅ Touch-friendly (padding adecuado)
 
-#### Paso 2: Members CRUD (PENDIENTE 🔜)
-- [ ] Members List con tabla y búsqueda
-- [ ] Members Create con formulario
-- [ ] Members Show con QR Code
-- [ ] Members Edit
-- [ ] Componentes: MemberForm, MemberQRCode
+#### Paso 2: Members CRUD (COMPLETO ✅)
+- [x] Members List con tabla responsive y cards mobile
+- [x] Members Create con formulario responsive (código auto-generado)
+- [x] Members Show con QR Code + descarga PNG
+- [x] Members Edit con formulario pre-cargado
+- [x] Toggle activar/desactivar desde lista
+- [x] Integración completa con backend `/api/members`
+- [x] Diseño responsive mobile-first
+- [x] QR Code con react-qr-code
+- [x] Estadísticas (membresías, asistencias)
+- [x] Navegación fluida entre vistas
 
 #### Paso 3: Disciplines CRUD (PENDIENTE)
 - [ ] Disciplines List
@@ -184,13 +189,11 @@
 
 ## 🔜 Siguiente Paso
 
-**Fase 1.6 - Paso 2: Members CRUD para Admin Gym**
-- [ ] Members List (tabla responsive + vista mobile cards)
-- [ ] Members Create (formulario con generación automática de código)
-- [ ] Members Show (vista detallada con QR Code)
-- [ ] Members Edit (actualización de datos)
-- [ ] Componentes: MemberForm, MemberQRCode
-- [ ] Integración con backend `/api/members`
+**Fase 1.6 - Paso 3: Disciplines CRUD para Admin Gym**
+- [ ] Disciplines List (tabla responsive + cards mobile)
+- [ ] Disciplines Create/Edit (formulario con nombre y descripción)
+- [ ] Toggle activar/desactivar disciplinas
+- [ ] Integración con backend `/api/disciplines`
 
 ---
 

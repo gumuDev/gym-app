@@ -68,7 +68,10 @@ export const Settings = () => {
         telegram_bot_token: gymData.telegram_bot_token || '',
       });
     } catch (error: any) {
-      alert('Error al cargar la configuración del gimnasio');
+      console.error('Error completo:', error);
+      console.error('Error response:', error.response);
+      const errorMessage = error.response?.data?.message || error.message || 'Error desconocido';
+      alert(`Error al cargar la configuración del gimnasio: ${errorMessage}`);
     } finally {
       setLoadingData(false);
     }

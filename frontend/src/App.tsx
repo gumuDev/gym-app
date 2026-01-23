@@ -24,6 +24,9 @@ import { MembersEdit } from './pages/admin-gym/members/edit';
 import { DisciplinesList } from './pages/admin-gym/disciplines/list';
 import { DisciplinesCreate } from './pages/admin-gym/disciplines/create';
 import { DisciplinesEdit } from './pages/admin-gym/disciplines/edit';
+import { PricingList } from './pages/admin-gym/pricing/list';
+import { PricingCreate } from './pages/admin-gym/pricing/create';
+import { PricingEdit } from './pages/admin-gym/pricing/edit';
 
 function App() {
   return (
@@ -61,6 +64,7 @@ function App() {
             name: 'admin-gym/pricing',
             list: '/admin-gym/pricing',
             create: '/admin-gym/pricing/create',
+            edit: '/admin-gym/pricing/edit/:id',
           },
           {
             name: 'admin-gym/memberships',
@@ -100,6 +104,9 @@ function App() {
             <Route path="disciplines" element={<DisciplinesList />} />
             <Route path="disciplines/create" element={<DisciplinesCreate />} />
             <Route path="disciplines/edit/:id" element={<DisciplinesEdit />} />
+            <Route path="pricing" element={<PricingList />} />
+            <Route path="pricing/create" element={<PricingCreate />} />
+            <Route path="pricing/edit/:id" element={<PricingEdit />} />
           </Route>
 
           {/* Default Routes */}

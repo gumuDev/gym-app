@@ -3,9 +3,10 @@ import { InputHTMLAttributes } from 'react';
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
+  helperText?: string;
 }
 
-export const Input = ({ label, error, className = '', ...props }: InputProps) => {
+export const Input = ({ label, error, helperText, className = '', ...props }: InputProps) => {
   return (
     <div className="mb-4">
       {label && (
@@ -21,6 +22,7 @@ export const Input = ({ label, error, className = '', ...props }: InputProps) =>
         {...props}
       />
       {error && <p className="mt-1 text-sm text-red-500">{error}</p>}
+      {!error && helperText && <p className="mt-1 text-sm text-gray-500">{helperText}</p>}
     </div>
   );
 };

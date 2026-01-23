@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigation } from '@refinedev/core';
+import { useParams } from 'react-router-dom';
+import { useNavigation } from '@refinedev/core';
 import { AdminGymLayout } from '../../../components/layout/AdminGymLayout';
 import { Card } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';

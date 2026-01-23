@@ -17,6 +17,10 @@ import { GymsEdit } from './pages/super-admin/gyms/edit';
 
 // Admin Gym Pages
 import { AdminGymDashboard } from './pages/admin-gym/dashboard';
+import { MembersList } from './pages/admin-gym/members/list';
+import { MembersCreate } from './pages/admin-gym/members/create';
+import { MembersShow } from './pages/admin-gym/members/show';
+import { MembersEdit } from './pages/admin-gym/members/edit';
 
 function App() {
   return (
@@ -85,7 +89,10 @@ function App() {
           {/* Admin Gym Routes */}
           <Route path="/admin-gym">
             <Route path="dashboard" element={<AdminGymDashboard />} />
-            {/* TODO: Agregar más rutas en los siguientes pasos */}
+            <Route path="members" element={<MembersList />} />
+            <Route path="members/create" element={<MembersCreate />} />
+            <Route path="members/show/:id" element={<MembersShow />} />
+            <Route path="members/edit/:id" element={<MembersEdit />} />
           </Route>
 
           {/* Default Routes */}

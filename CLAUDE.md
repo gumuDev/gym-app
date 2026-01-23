@@ -10,10 +10,11 @@ Sistema SaaS multi-gimnasio para gestión de clientes, membresías, asistencias 
 ## 🛠️ Stack Tecnológico
 
 ### Frontend
-- React 18 + Vite + TypeScript
-- Refine (Headless) para CRUD/Admin
-- TailwindCSS para estilos
-- Axios para HTTP requests
+- **React 18.3.1** + Vite 7 + TypeScript 5.9
+- **Refine v4.58.0** (Headless) para CRUD/Admin
+- **React Router v6.27.0** ⚠️ IMPORTANTE: NO usar v7 (incompatible con Refine v4)
+- TailwindCSS v3 para estilos
+- Axios 1.7.2 para HTTP requests
 - React Query (incluido en Refine)
 - react-qr-code + html5-qrcode
 
@@ -113,6 +114,11 @@ Todos los datos están aislados por `gym_id`:
 4. **SIEMPRE** validar con Zod antes de procesar requests
 5. **SIEMPRE** usar transacciones Prisma para operaciones múltiples
 6. **SIEMPRE** registrar errores con contexto suficiente
+7. **⚠️ CRÍTICO - Versiones Frontend:**
+   - React 18.3.1 (NO usar v19)
+   - React Router v6.27.0 (NO usar v7)
+   - Refine v4.58.0 (compatible solo con React Router v6)
+   - `import { BrowserRouter } from 'react-router-dom'` (NO usar BrowserRouterComponent)
 
 ## 🚀 Comandos Útiles
 

@@ -35,10 +35,78 @@ async function main() {
 
   console.log('✅ SaaS Config created');
 
+  // Crear Gym de prueba
+  const testGym = await prisma.gym.upsert({
+    where: { slug: 'gym-olimpo' },
+    update: {},
+    create: {
+      name: 'Gym Olimpo',
+      slug: 'gym-olimpo',
+      address: 'Av. Principal 123, Ciudad',
+      phone: '+1234567890',
+      email: 'contacto@gimolimp.com',
+      is_active: true,
+    },
+  });
+
+  console.log('✅ Test Gym created:', testGym.name);
+
+  // Crear Admin del Gym de prueba
+  const gymAdminPassword = await bcrypt.hash('admin123', 10);
+
+  const gymAdmin = await prisma.user.upsert({
+    where: {
+      gym_id_email: {
+        gym_id: testGym.id,
+        email: 'admin@gimolimp.com'
+      }
+    },
+    update: {},
+    create: {
+      email: 'admin@gimolimp.com',
+      password: gymAdminPassword,
+      name: 'Admin Olimpo',
+      role: 'ADMIN',
+      gym_id: testGym.id,
+    },
+  });
+
+  console.log('✅ Gym Admin created:', gymAdmin.email);
+
+  // Crear algunas disciplinas de prueba
+  const disciplines = await Promise.all([
+    prisma.discipline.upsert({
+      where: { id: 'discipline-1' },
+      update: {},
+      create: {
+        id: 'discipline-1',
+        name: 'Crossfit',
+        description: 'Entrenamiento funcional de alta intensidad',
+        gym_id: testGym.id,
+      },
+    }),
+    prisma.discipline.upsert({
+      where: { id: 'discipline-2' },
+      update: {},
+      create: {
+        id: 'discipline-2',
+        name: 'Musculación',
+        description: 'Entrenamiento con pesas',
+        gym_id: testGym.id,
+      },
+    }),
+  ]);
+
+  console.log('✅ Disciplines created:', disciplines.length);
+
   console.log('🎉 Seed completed!');
   console.log('\n📋 Credentials:');
-  console.log('Email: admin@gymapp.com');
-  console.log('Password: admin123');
+  console.log('Super Admin:');
+  console.log('  Email: admin@gymapp.com');
+  console.log('  Password: admin123');
+  console.log('\nGym Admin (Gym Olimpo):');
+  console.log('  Email: admin@gimolimp.com');
+  console.log('  Password: admin123');
 }
 
 main()

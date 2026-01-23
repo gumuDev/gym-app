@@ -1,7 +1,6 @@
 import dataProviderSimpleRest from '@refinedev/simple-rest';
 import axios from 'axios';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+import { TOKEN_KEY, USER_KEY, API_URL } from '../constants/auth';
 
 // Configurar axios instance
 const axiosInstance = axios.create({
@@ -11,7 +10,7 @@ const axiosInstance = axios.create({
 // Interceptor para agregar el token en cada request
 axiosInstance.interceptors.request.use(
   config => {
-    const token = localStorage.getItem('gymapp_token');
+    const token = localStorage.getItem(TOKEN_KEY);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -24,11 +23,20 @@ axiosInstance.interceptors.request.use(
 
 // Interceptor para manejar errores de autenticación
 axiosInstance.interceptors.response.use(
-  response => response,
+  response => {
+    // Transformar respuesta del backend { success, data } a formato Refine { data }
+    if (response.data?.success && response.data?.data !== undefined) {
+      return {
+        ...response,
+        data: response.data.data,
+      };
+    }
+    return response;
+  },
   error => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('gymapp_token');
-      localStorage.removeItem('gymapp_user');
+      localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem(USER_KEY);
       window.location.href = '/login';
     }
     return Promise.reject(error);

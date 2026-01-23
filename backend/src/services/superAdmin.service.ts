@@ -15,14 +15,14 @@ export const getDashboardMetrics = async () => {
 
   // MRR (Monthly Recurring Revenue)
   const saasConfig = await prisma.saasConfig.findFirst();
-  const mrr = activeGyms * (saasConfig?.monthly_price || 50);
+  const monthlyRecurringRevenue = activeGyms * (saasConfig?.monthly_price || 50);
 
   return {
     totalGyms,
     activeGyms,
     totalMembers,
     activeMembers,
-    mrr,
+    monthlyRecurringRevenue,
   };
 };
 
@@ -30,7 +30,7 @@ export const getDashboardMetrics = async () => {
  * Listar todos los gyms
  */
 export const getAllGyms = async () => {
-  return await prisma.gym.findMany({
+  const gyms = await prisma.gym.findMany({
     orderBy: { created_at: 'desc' },
     include: {
       _count: {
@@ -39,8 +39,24 @@ export const getAllGyms = async () => {
           users: true,
         },
       },
+      users: {
+        where: { role: 'ADMIN' },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+        take: 1,
+      },
     },
   });
+
+  // Formatear respuesta para incluir owner_name y owner_email
+  return gyms.map(gym => ({
+    ...gym,
+    owner_name: gym.users[0]?.name || 'Sin admin',
+    owner_email: gym.users[0]?.email || 'N/A',
+  }));
 };
 
 /**

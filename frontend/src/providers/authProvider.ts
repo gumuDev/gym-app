@@ -1,12 +1,7 @@
-import { AuthProvider } from '@refinedev/core';
 import axios from 'axios';
+import { TOKEN_KEY, USER_KEY, API_URL } from '../constants/auth';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
-
-export const TOKEN_KEY = 'gymapp_token';
-export const USER_KEY = 'gymapp_user';
-
-export const authProvider: AuthProvider = {
+export const authProvider = {
   login: async ({ email, password, code, type }) => {
     try {
       let endpoint = '/auth/login';
@@ -21,20 +16,44 @@ export const authProvider: AuthProvider = {
         payload = { email, password };
       }
 
+      console.log('🔐 Intentando login en:', `${API_URL}${endpoint}`);
+      console.log('📦 Payload:', payload);
+
       const { data } = await axios.post(`${API_URL}${endpoint}`, payload);
 
-      if (data.token) {
-        localStorage.setItem(TOKEN_KEY, data.token);
-        localStorage.setItem(USER_KEY, JSON.stringify(data.user));
+      console.log('✅ Respuesta del servidor:', data);
+
+      // El backend devuelve { success, data: { token, user } }
+      const responseData = data.data || data;
+      const token = responseData.token;
+      const user = responseData.user;
+
+      if (token && user) {
+        localStorage.setItem(TOKEN_KEY, token);
+        localStorage.setItem(USER_KEY, JSON.stringify(user));
 
         // Configurar axios para usar el token en todas las peticiones
-        axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+        // Determinar redirección según rol
+        const role = user.role?.toLowerCase();
+        let redirectTo = '/dashboard';
+
+        if (role === 'super_admin') {
+          redirectTo = '/super-admin/dashboard';
+        } else if (role === 'admin' || role === 'receptionist') {
+          redirectTo = '/admin-gym/dashboard';
+        }
+
+        console.log('🎯 Redirigiendo a:', redirectTo);
 
         return {
           success: true,
-          redirectTo: '/',
+          redirectTo,
         };
       }
+
+      console.log('❌ No hay token en la respuesta');
 
       return {
         success: false,
@@ -44,6 +63,7 @@ export const authProvider: AuthProvider = {
         },
       };
     } catch (error: any) {
+      console.error('❌ Error en login:', error);
       return {
         success: false,
         error: {

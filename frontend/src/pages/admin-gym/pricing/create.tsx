@@ -42,8 +42,11 @@ export const PricingCreate = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
 
+        // El interceptor ya transformó la respuesta, así que response.data es el array directamente
+        const allDisciplines = Array.isArray(response.data) ? response.data : response.data.data || [];
+
         // Filtrar solo disciplinas activas
-        const activeDisciplines = response.data.data.filter((d: Discipline) => d.is_active);
+        const activeDisciplines = allDisciplines.filter((d: Discipline) => d.is_active);
         setDisciplines(activeDisciplines);
 
         if (activeDisciplines.length === 0) {

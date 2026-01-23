@@ -37,8 +37,11 @@ export const PricingEdit = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
 
+        // El interceptor ya transformó la respuesta
+        const plans = Array.isArray(response.data) ? response.data : response.data.data || [];
+
         // Buscar el plan por id
-        const foundPlan = response.data.data.find((p: PricingPlan) => p.id === id);
+        const foundPlan = plans.find((p: PricingPlan) => p.id === id);
 
         if (!foundPlan) {
           alert('Plan no encontrado');

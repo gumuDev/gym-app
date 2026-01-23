@@ -1,6 +1,6 @@
 # 📊 Progreso del Proyecto GymApp
 
-**Última actualización:** 2026-01-23 (Fase 1.6 Paso 7 COMPLETO: Settings - Configuración del Gym)
+**Última actualización:** 2026-01-23 (Fase 1.6 100% COMPLETA - Todos los módulos implementados)
 
 ---
 
@@ -210,11 +210,20 @@
 - [x] Backend: Rutas `/api/gyms/me` (GET y PATCH)
 - [x] Diseño responsive mobile-first
 
+#### Paso 8: Users (COMPLETO ✅)
+- [x] Users List con separación Admin/Equipo
+- [x] Users Create (recepcionista o entrenador)
+- [x] Users Edit con cambio de contraseña opcional
+- [x] Toggle activar/desactivar usuarios
+- [x] Roles: Recepcionista y Entrenador
+- [x] Backend: Rutas `/api/users` completas (CRUD + activate)
+- [x] Diseño responsive mobile-first
+
 ---
 
 ## 🔜 Siguiente Paso
 
-**Fase 1.6 COMPLETA - Frontend Admin Gym ✅**
+**Fase 1.6 COMPLETA 100% - Frontend Admin Gym ✅**
 
 Todos los pasos de la Fase 1.6 han sido completados:
 - ✅ Paso 1: Layout y Dashboard
@@ -224,6 +233,7 @@ Todos los pasos de la Fase 1.6 han sido completados:
 - ✅ Paso 5: Memberships CRUD
 - ✅ Paso 6: Attendances + QR Scanner
 - ✅ Paso 7: Settings
+- ✅ Paso 8: Users (Equipo del Gym)
 
 **Siguiente fase:** Fase 1.7 - Frontend App Cliente (Opcional)
 O continuar con Fase 1.8 - Notificaciones Telegram

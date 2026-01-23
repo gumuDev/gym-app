@@ -1,4 +1,6 @@
-import prisma from '../utils/prisma';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 /**
  * Obtener información del gym actual

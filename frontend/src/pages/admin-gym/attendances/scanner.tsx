@@ -30,12 +30,14 @@ interface ScanResult {
 
 export const AttendancesScanner = () => {
   const { push } = useNavigation();
+  const [scanMode, setScanMode] = useState<'camera' | 'upload'>('camera');
   const [scanning, setScanning] = useState(false);
   const [scanResult, setScanResult] = useState<ScanResult | null>(null);
   const [error, setError] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const [cameraError, setCameraError] = useState<string>('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const startScanner = async () => {
     try {
@@ -176,7 +178,49 @@ export const AttendancesScanner = () => {
   const handleCancel = async () => {
     setScanResult(null);
     setError('');
-    await startScanner();
+    if (scanMode === 'camera') {
+      await startScanner();
+    }
+  };
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setLoading(true);
+    setError('');
+    setScanResult(null);
+
+    try {
+      const html5QrCode = new Html5Qrcode('qr-reader-file');
+      const decodedText = await html5QrCode.scanFile(file, true);
+
+      // Process the scanned code
+      await handleCodeScanned(decodedText);
+
+      // Clear the html5QrCode instance
+      html5QrCode.clear();
+    } catch (err: any) {
+      console.error('Error decoding QR from image:', err);
+      setError('No se pudo leer el código QR de la imagen. Asegúrate de que sea una imagen clara del código.');
+    } finally {
+      setLoading(false);
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  const handleModeChange = async (mode: 'camera' | 'upload') => {
+    // Stop scanner if switching modes
+    if (scanning) {
+      await stopScanner();
+    }
+    setScanMode(mode);
+    setError('');
+    setCameraError('');
+    setScanResult(null);
   };
 
   useEffect(() => {
@@ -217,8 +261,36 @@ export const AttendancesScanner = () => {
           </div>
         </div>
 
-        {/* Scanner Area */}
+        {/* Mode Tabs */}
         {!scanning && !scanResult && (
+          <Card className="mb-4">
+            <div className="flex border-b border-gray-200">
+              <button
+                onClick={() => handleModeChange('camera')}
+                className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+                  scanMode === 'camera'
+                    ? 'text-green-600 border-b-2 border-green-600 bg-green-50'
+                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
+                }`}
+              >
+                📷 Escanear con Cámara
+              </button>
+              <button
+                onClick={() => handleModeChange('upload')}
+                className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+                  scanMode === 'upload'
+                    ? 'text-green-600 border-b-2 border-green-600 bg-green-50'
+                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
+                }`}
+              >
+                🖼️ Subir Imagen
+              </button>
+            </div>
+          </Card>
+        )}
+
+        {/* Scanner Area - Camera Mode */}
+        {scanMode === 'camera' && !scanning && !scanResult && (
           <Card>
             <div className="text-center py-12">
               <div className="text-6xl mb-4">📷</div>
@@ -238,24 +310,100 @@ export const AttendancesScanner = () => {
           </Card>
         )}
 
-        {/* Camera View */}
-        {scanning && (
+        {/* Scanner Area - Upload Mode */}
+        {scanMode === 'upload' && !scanning && !scanResult && (
           <Card>
-            <div className="text-center">
-              <h2 className="text-lg font-semibold text-gray-800 mb-4">
-                Apunta la cámara al código QR
+            <div className="text-center py-12">
+              <div className="text-6xl mb-4">🖼️</div>
+              <h2 className="text-xl font-semibold text-gray-800 mb-2">
+                Subir Imagen del QR
               </h2>
-              <div
-                id="qr-reader"
-                className="mx-auto max-w-md rounded-lg overflow-hidden"
-              ></div>
-              <div className="mt-6">
-                <Button variant="secondary" onClick={stopScanner}>
-                  Detener Escaneo
-                </Button>
-              </div>
+              <p className="text-gray-600 mb-6">
+                Selecciona una imagen que contenga el código QR del cliente
+              </p>
+
+              {/* Hidden file input */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFileUpload}
+                className="hidden"
+                id="qr-file-input"
+              />
+
+              {/* Hidden div for scanFile */}
+              <div id="qr-reader-file" className="hidden"></div>
+
+              <label
+                htmlFor="qr-file-input"
+                className={`inline-flex items-center justify-center font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 px-6 py-3 text-lg cursor-pointer ${
+                  loading
+                    ? 'bg-blue-600 opacity-50 cursor-not-allowed'
+                    : 'bg-blue-600 hover:bg-blue-700 text-white focus:ring-blue-500'
+                }`}
+              >
+                {loading ? (
+                  <span className="flex items-center gap-2">
+                    <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                        fill="none"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      />
+                    </svg>
+                    Procesando...
+                  </span>
+                ) : (
+                  'Seleccionar Imagen'
+                )}
+              </label>
+
+              {error && (
+                <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-sm text-red-800">{error}</p>
+                </div>
+              )}
             </div>
           </Card>
+        )}
+
+        {/* Camera View */}
+        {scanning && (
+          <>
+            <Card className="mb-4">
+              <div className="flex border-b border-gray-200">
+                <div className="flex-1 px-4 py-3 text-sm font-medium text-green-600 border-b-2 border-green-600 bg-green-50 text-center">
+                  📷 Escaneando...
+                </div>
+              </div>
+            </Card>
+            <Card>
+              <div className="text-center">
+                <h2 className="text-lg font-semibold text-gray-800 mb-4">
+                  Apunta la cámara al código QR
+                </h2>
+                <div
+                  id="qr-reader"
+                  className="mx-auto max-w-md rounded-lg overflow-hidden"
+                ></div>
+                <div className="mt-6">
+                  <Button variant="secondary" onClick={stopScanner}>
+                    Detener Escaneo
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          </>
         )}
 
         {/* Scan Result */}

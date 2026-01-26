@@ -1,6 +1,6 @@
 # 📊 Progreso del Proyecto GymApp
 
-**Última actualización:** 2026-01-23 (Fase 1.6 100% COMPLETA - Todos los módulos implementados)
+**Última actualización:** 2026-01-26 (Fase 1.6 100% COMPLETA + Mejoras en QR Scanner)
 
 ---
 
@@ -196,10 +196,11 @@
 #### Paso 6: Attendances + QR Scanner (COMPLETO ✅)
 - [x] Attendances List con filtros (Hoy, Semana, Mes, Todas)
 - [x] QR Scanner con html5-qrcode
+- [x] **Modo dual de escaneo**: Cámara en vivo + Subir imagen QR
 - [x] Registro de asistencia con validación de membresía activa
 - [x] Alertas para membresías por vencer (7 días)
 - [x] Vista de información del member al escanear
-- [x] Diseño responsive mobile-first
+- [x] Diseño responsive mobile-first con tabs
 
 #### Paso 7: Settings (COMPLETO ✅)
 - [x] Gym Settings - Ver y editar información del gimnasio
@@ -563,5 +564,46 @@ className="hidden sm:block"
 5. **Simplificar navegación en mobile**: hamburger menu obligatorio
 6. **Cards en lugar de tablas**: mejor UX en pantallas pequeñas
 7. **Texto legible**: mínimo 14px (text-sm) en mobile
+
+---
+
+## 🎨 Mejoras Post-Fase 1.6 (2026-01-26)
+
+### QR Scanner - Modo Dual de Escaneo
+
+**Implementado:** 2026-01-26
+
+#### Funcionalidad Agregada
+Se mejoró el scanner de QR para soportar **dos modos de escaneo**:
+
+1. **📷 Escanear con Cámara** (modo original)
+   - Usa la cámara del dispositivo en tiempo real
+   - Escaneo continuo con html5-qrcode
+
+2. **🖼️ Subir Imagen** (nuevo)
+   - Permite seleccionar una imagen desde el dispositivo
+   - Decodifica QR desde fotos guardadas
+   - Útil cuando la cámara no funciona o se tiene captura del QR
+
+#### Implementación Técnica
+- **Archivo modificado:** `frontend/src/pages/admin-gym/attendances/scanner.tsx`
+- **Método usado:** `Html5Qrcode.scanFile()` para decodificar desde imagen
+- **UI mejorada:** Sistema de tabs para alternar entre modos
+- **Estados agregados:**
+  - `scanMode`: 'camera' | 'upload'
+  - `fileInputRef`: referencia al input file
+- **Funciones nuevas:**
+  - `handleFileUpload()`: procesa imagen seleccionada
+  - `handleModeChange()`: alterna entre modos de escaneo
+
+#### Casos de Uso
+- ✅ Escanear QR en tiempo real con cámara
+- ✅ Subir foto del QR desde galería
+- ✅ Procesar screenshot del QR
+- ✅ Funciona en dispositivos sin cámara o con permisos denegados
+- ✅ Validación de imagen clara vs borrosa
+
+#### Testing
+Ver documento: `TESTING-QR-UPLOAD.md`
 
 ---

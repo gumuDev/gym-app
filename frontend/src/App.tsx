@@ -38,6 +38,13 @@ import { UsersList } from './pages/admin-gym/users/list';
 import { UsersCreate } from './pages/admin-gym/users/create';
 import { UsersEdit } from './pages/admin-gym/users/edit';
 
+// Client Pages
+import { ClientLogin } from './pages/client/login';
+import { ClientMyQR } from './pages/client/my-qr';
+import { ClientMyMembership } from './pages/client/my-membership';
+import { ClientMyAttendances } from './pages/client/my-attendances';
+import { ClientProfile } from './pages/client/profile';
+
 function App() {
   return (
     <BrowserRouter>
@@ -96,6 +103,23 @@ function App() {
             create: '/admin-gym/users/create',
             edit: '/admin-gym/users/edit/:id',
           },
+          // Client resources
+          {
+            name: 'client/my-qr',
+            list: '/client/my-qr',
+          },
+          {
+            name: 'client/my-membership',
+            list: '/client/my-membership',
+          },
+          {
+            name: 'client/my-attendances',
+            list: '/client/my-attendances',
+          },
+          {
+            name: 'client/profile',
+            list: '/client/profile',
+          },
         ]}
         options={{
           syncWithLocation: true,
@@ -137,6 +161,15 @@ function App() {
             <Route path="users" element={<UsersList />} />
             <Route path="users/create" element={<UsersCreate />} />
             <Route path="users/edit/:id" element={<UsersEdit />} />
+          </Route>
+
+          {/* Client Routes */}
+          <Route path="/client">
+            <Route path="login" element={<ClientLogin />} />
+            <Route path="my-qr" element={<ClientMyQR />} />
+            <Route path="my-membership" element={<ClientMyMembership />} />
+            <Route path="my-attendances" element={<ClientMyAttendances />} />
+            <Route path="profile" element={<ClientProfile />} />
           </Route>
 
           {/* Default Routes */}

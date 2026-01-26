@@ -7,7 +7,7 @@ export const createAttendanceSchema = z.object({
   body: z.object({
     member_code: z
       .string()
-      .regex(/^GYM-\d{3,}$/, 'Código debe tener formato GYM-001'),
+      .regex(/^GYM-[A-F0-9]{6}-\d{3,}$/, 'Código debe tener formato GYM-XXXXXX-001'),
     notes: z.string().optional(),
   }),
 });

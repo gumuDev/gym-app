@@ -20,13 +20,13 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
 /**
  * POST /api/auth/login/member
- * Login para members por código
+ * Login para members por código o teléfono
  */
 export const loginMember = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { code } = req.body;
+    const { code, phone } = req.body;
 
-    const result = await authService.loginMember(code);
+    const result = await authService.loginMember(code, phone);
 
     sendSuccess(res, result, 'Login exitoso');
   } catch (error: any) {

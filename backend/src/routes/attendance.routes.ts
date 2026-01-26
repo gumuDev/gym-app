@@ -23,10 +23,11 @@ router.get('/today', roleMiddleware(['admin', 'receptionist']), attendanceContro
 
 /**
  * GET /api/attendances/member/:memberId
+ * Permite a admins, recepcionistas y members ver asistencias
  */
 router.get(
   '/member/:memberId',
-  roleMiddleware(['admin', 'receptionist']),
+  roleMiddleware(['admin', 'receptionist', 'member']),
   validateMiddleware(getAttendancesByMemberSchema),
   attendanceController.getAttendancesByMember
 );

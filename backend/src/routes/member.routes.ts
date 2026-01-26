@@ -49,10 +49,11 @@ router.post(
 /**
  * GET /api/members/:id
  * Obtener detalle de member
+ * Permite a admins, recepcionistas y members ver su perfil
  */
 router.get(
   '/:id',
-  roleMiddleware(['admin', 'receptionist']),
+  roleMiddleware(['admin', 'receptionist', 'member']),
   validateMiddleware(getMemberByIdSchema),
   memberController.getMemberById
 );

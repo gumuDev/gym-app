@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useLogin } from '@refinedev/core';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 
 export const Login = () => {
+  const navigate = useNavigate();
   const { mutate: login, isLoading } = useLogin();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -76,6 +78,15 @@ export const Login = () => {
             {isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
           </Button>
         </form>
+
+        <div className="mt-6 text-center">
+          <button
+            onClick={() => navigate('/client/login')}
+            className="text-sm text-green-600 hover:text-green-700 font-medium transition-colors"
+          >
+            ¿Eres cliente? Ingresa aquí →
+          </button>
+        </div>
 
         <div className="mt-6 pt-6 border-t border-gray-200">
           <p className="text-xs text-gray-500 text-center">

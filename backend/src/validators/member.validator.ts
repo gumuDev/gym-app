@@ -48,7 +48,7 @@ export const getMemberByIdSchema = z.object({
  */
 export const getMemberByCodeSchema = z.object({
   params: z.object({
-    code: z.string().regex(/^GYM-\d{3,}$/, 'Código debe tener formato GYM-001'),
+    code: z.string().regex(/^GYM-[A-F0-9]{6}-\d{3,}$/, 'Código debe tener formato GYM-XXXXXX-001'),
   }),
 });
 

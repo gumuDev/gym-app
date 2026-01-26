@@ -11,13 +11,17 @@ export const loginSchema = z.object({
 });
 
 /**
- * Validator para login de members por código
+ * Validator para login de members por código o teléfono
  */
 export const loginMemberSchema = z.object({
   body: z.object({
     code: z
       .string()
-      .regex(/^GYM-\d{3,}$/, 'Código debe tener formato GYM-001, GYM-002, etc.'),
+      .regex(/^GYM-[A-F0-9]{6}-\d{3,}$/, 'Código debe tener formato GYM-XXXXXX-001')
+      .optional(),
+    phone: z.string().min(1, 'Teléfono requerido').optional(),
+  }).refine((data) => data.code || data.phone, {
+    message: 'Debes proporcionar código o teléfono',
   }),
 });
 

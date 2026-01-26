@@ -92,16 +92,27 @@ export const loginUser = async (email: string, password: string): Promise<LoginR
 };
 
 /**
- * Login para Members por código
+ * Login para Members por código o teléfono
  */
-export const loginMember = async (code: string): Promise<LoginResponse> => {
-  const member = await prisma.member.findUnique({
-    where: { code },
-    include: { gym: true },
-  });
+export const loginMember = async (code?: string, phone?: string): Promise<LoginResponse> => {
+  let member;
+
+  if (code) {
+    member = await prisma.member.findUnique({
+      where: { code },
+      include: { gym: true },
+    });
+  } else if (phone) {
+    member = await prisma.member.findFirst({
+      where: { phone },
+      include: { gym: true },
+    });
+  } else {
+    throw new Error('Debes proporcionar código o teléfono');
+  }
 
   if (!member) {
-    throw new Error('Código inválido');
+    throw new Error(code ? 'Código inválido' : 'Teléfono no encontrado');
   }
 
   if (!member.is_active) {
@@ -125,6 +136,9 @@ export const loginMember = async (code: string): Promise<LoginResponse> => {
     user: {
       id: member.id,
       name: member.name,
+      code: member.code,
+      phone: member.phone,
+      email: member.email,
       role: 'member',
       gymId: member.gym_id,
       memberId: member.id,

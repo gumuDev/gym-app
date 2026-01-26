@@ -29,10 +29,11 @@ router.get(
 
 /**
  * GET /api/memberships/member/:memberId
+ * Permite a admins, recepcionistas y members ver membresías
  */
 router.get(
   '/member/:memberId',
-  roleMiddleware(['admin', 'receptionist']),
+  roleMiddleware(['admin', 'receptionist', 'member']),
   validateMiddleware(getMembershipsByMemberSchema),
   membershipController.getMembershipsByMember
 );

@@ -2,15 +2,15 @@ import axios from 'axios';
 import { TOKEN_KEY, USER_KEY, API_URL } from '../constants/auth';
 
 export const authProvider = {
-  login: async ({ email, password, code, type }) => {
+  login: async ({ email, password, code, phone, type }) => {
     try {
       let endpoint = '/auth/login';
       let payload: any = {};
 
-      // Login para members (por código)
-      if (type === 'member' && code) {
+      // Login para members (por código o teléfono)
+      if (type === 'member' && (code || phone)) {
         endpoint = '/auth/login/member';
-        payload = { code };
+        payload = code ? { code } : { phone };
       } else {
         // Login para super admin, admin gym, recepcionista
         payload = { email, password };
@@ -43,6 +43,8 @@ export const authProvider = {
           redirectTo = '/super-admin/dashboard';
         } else if (role === 'admin' || role === 'receptionist') {
           redirectTo = '/admin-gym/dashboard';
+        } else if (role === 'member') {
+          redirectTo = '/client/my-qr';
         }
 
         console.log('🎯 Redirigiendo a:', redirectTo);

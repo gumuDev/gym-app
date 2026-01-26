@@ -12,12 +12,12 @@ export const generateMemberCode = async (gymId: string): Promise<string> => {
     where: { gym_id: gymId },
     orderBy: { created_at: 'desc' },
   });
-
+  const shortGymId = gymId.replace(/-/g, '').slice(0, 6).toUpperCase(); 
   let nextNumber = 1;
 
   if (lastMember && lastMember.code) {
     // Extraer el número del código (GYM-001 -> 001)
-    const match = lastMember.code.match(/GYM-(\d+)/);
+    const match = lastMember.code.match(/GYM-[A-F0-9]+-(\d+)$/);
     if (match) {
       nextNumber = parseInt(match[1], 10) + 1;
     }
@@ -25,8 +25,7 @@ export const generateMemberCode = async (gymId: string): Promise<string> => {
 
   // Formatear con padding de 3 dígitos
   const paddedNumber = nextNumber.toString().padStart(3, '0');
-
-  return `GYM-${paddedNumber}`;
+  return `GYM-${shortGymId}-${paddedNumber}`;
 };
 
 /**

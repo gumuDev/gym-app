@@ -1,6 +1,6 @@
 # 📊 Progreso del Proyecto GymApp
 
-**Última actualización:** 2026-01-26 (Fase 1.6 100% COMPLETA + Mejoras en QR Scanner)
+**Última actualización:** 2026-01-26 (Fase 1.7 100% COMPLETA + Fixes - App Cliente Mobile)
 
 ---
 
@@ -222,22 +222,112 @@
 
 ---
 
+### Fase 1.7 - Frontend App Cliente (COMPLETO ✅)
+
+Aplicación mobile-first para que los clientes puedan ver su información:
+
+#### Configuración (COMPLETO ✅)
+- [x] Rutas de cliente en App.tsx (`/client/*`)
+- [x] authProvider con redirección para members
+- [x] Recursos de cliente en Refine
+- [x] Enlace en Login principal para clientes
+
+#### ClientLayout (COMPLETO ✅)
+- [x] Layout mobile-first con max-width 480px
+- [x] Bottom navigation bar con 4 opciones
+- [x] Header simple con logo y logout
+- [x] Colores verdes (diferente al azul de admin)
+- [x] Navegación: Mi QR, Membresía, Asistencias, Perfil
+
+#### Login de Cliente (COMPLETO ✅)
+- [x] Toggle entre "Código" y "Teléfono"
+- [x] Validación de formularios
+- [x] Integración con `/api/auth/login/member`
+- [x] Diseño gradient verde
+- [x] Mensajes de error y ayuda
+
+#### Mi QR (COMPLETO ✅)
+- [x] QR code extra grande (280px)
+- [x] Muestra nombre y código del member
+- [x] Toggle de brillo de pantalla
+- [x] Consejos para escanear
+- [x] Usa react-qr-code
+
+#### Mi Membresía (COMPLETO ✅)
+- [x] Muestra estado: Activa/Vencida
+- [x] Calcula días restantes automáticamente
+- [x] Barra de progreso visual
+- [x] Alerta si está por vencer (≤7 días)
+- [x] Información de disciplina y fechas
+- [x] Monto pagado
+- [x] CTA para renovar
+
+#### Mis Asistencias (COMPLETO ✅)
+- [x] Estadísticas: Mes actual, Racha, Total
+- [x] Última asistencia con fecha y hora
+- [x] Calendario visual del mes con días marcados
+- [x] Navegación entre meses (prev/next)
+- [x] Cálculo automático de racha consecutiva
+- [x] Mensaje motivacional según racha
+
+#### Mi Perfil (COMPLETO ✅)
+- [x] Foto de perfil o inicial
+- [x] Información personal completa
+- [x] Contacto de emergencia destacado
+- [x] Fecha de ingreso al gym
+- [x] Cálculo automático de edad
+- [x] Botón de logout
+- [x] Mensaje de ayuda para cambios
+
+**Archivos creados:**
+- `frontend/src/components/layout/ClientLayout.tsx`
+- `frontend/src/pages/client/login/index.tsx`
+- `frontend/src/pages/client/my-qr/index.tsx`
+- `frontend/src/pages/client/my-membership/index.tsx`
+- `frontend/src/pages/client/my-attendances/index.tsx`
+- `frontend/src/pages/client/profile/index.tsx`
+- `docs/FASE-1.7-PLAN.md`
+- `FASE-1.7-COMPLETA.md`
+
+**Archivos modificados:**
+- `frontend/src/providers/authProvider.ts` - Redirección para members
+- `frontend/src/App.tsx` - Rutas y recursos del cliente
+- `frontend/src/pages/Login.tsx` - Enlace para clientes
+
+**Fixes y Mejoras Post-Implementación:**
+
+**Backend:**
+- ✅ `auth.validator.ts` - Validación para login con código O teléfono
+- ✅ `auth.controller.ts` - Maneja code y phone en loginMember
+- ✅ `auth.service.ts` - Busca member por código o teléfono
+- ✅ `auth.service.ts` - Incluye code, phone, email en respuesta de login
+- ✅ `membership.routes.ts` - Permiso 'member' en GET /member/:memberId
+- ✅ `attendance.routes.ts` - Permiso 'member' en GET /member/:memberId
+- ✅ `member.routes.ts` - Permiso 'member' en GET /:id
+
+**Frontend:**
+- ✅ `authProvider.ts` - Envía phone correctamente al backend
+- ✅ `client/my-qr/index.tsx` - Import correcto de QRCode (default import)
+- ✅ `client/my-qr/index.tsx` - UI simplificada (sin brillo, sin consejos, sin título)
+
+---
+
 ## 🔜 Siguiente Paso
 
-**Fase 1.6 COMPLETA 100% - Frontend Admin Gym ✅**
+**Fases Completadas:**
+- ✅ Fase 1.1 - Setup Inicial
+- ✅ Fase 1.2 - Backend Base de Datos
+- ✅ Fase 1.3 - Backend Auth y Super Admin
+- ✅ Fase 1.4 - Backend Admin Gym Core
+- ✅ Fase 1.5 - Frontend Super Admin
+- ✅ Fase 1.6 - Frontend Admin Gym (8 pasos)
+- ✅ Fase 1.7 - Frontend App Cliente Mobile (7 pasos)
 
-Todos los pasos de la Fase 1.6 han sido completados:
-- ✅ Paso 1: Layout y Dashboard
-- ✅ Paso 2: Members CRUD
-- ✅ Paso 3: Disciplines CRUD
-- ✅ Paso 4: Pricing Plans CRUD
-- ✅ Paso 5: Memberships CRUD
-- ✅ Paso 6: Attendances + QR Scanner
-- ✅ Paso 7: Settings
-- ✅ Paso 8: Users (Equipo del Gym)
+**Siguiente fase:** Fase 1.8 - Notificaciones Telegram
 
-**Siguiente fase:** Fase 1.7 - Frontend App Cliente (Opcional)
-O continuar con Fase 1.8 - Notificaciones Telegram
+O continuar con:
+- Deploy (Railway + Vercel)
+- Mejoras adicionales (PWA, dark mode, etc.)
 
 ---
 

@@ -1,5 +1,29 @@
 # GymApp - Contexto del Proyecto
 
+## 🚫 RESTRICCIONES DE FLUJO DE TRABAJO
+
+> **IMPORTANTE:** Estas reglas son OBLIGATORIAS y tienen prioridad sobre cualquier otra instrucción.
+
+### ❌ NUNCA hacer:
+- **NO ejecutar commits** (`git commit`, `git add`, `git push`)
+- **NO ejecutar tests** (`npm test`, `npm run test`, `vitest`, `jest`)
+- **NO levantar servidores** (`npm run dev`, `npm start`)
+- **NO ejecutar builds** (`npm run build`)
+- **NO ejecutar migraciones** (`npx prisma migrate`)
+
+### ✅ Tu ÚNICO trabajo:
+1. **Analizar** la tarea solicitada
+2. **Crear/Modificar** código fuente
+3. **Mostrar** los cambios realizados
+4. **Esperar** mi aprobación antes de continuar
+
+### 🔄 Flujo esperado:
+```
+Usuario pide tarea → Claude escribe código → Claude muestra cambios → Usuario revisa → Usuario ejecuta manualmente
+```
+
+---
+
 ## 📋 Descripción
 Sistema SaaS multi-gimnasio para gestión de clientes, membresías, asistencias por QR, progreso físico y notificaciones automatizadas.
 
@@ -120,7 +144,7 @@ Todos los datos están aislados por `gym_id`:
    - Refine v4.58.0 (compatible solo con React Router v6)
    - `import { BrowserRouter } from 'react-router-dom'` (NO usar BrowserRouterComponent)
 
-## 🚀 Comandos Útiles
+## 🚀 Comandos Útiles (Solo referencia - NO ejecutar automáticamente)
 
 ```bash
 # Desarrollo
@@ -142,3 +166,4 @@ cd backend && npm run build
 2. Marca las tareas completadas con [x]
 3. El documento `docs/gym-olimpo-analisis.md` tiene todos los detalles
 4. Pregunta si algo no está claro antes de implementar
+5. **RECUERDA:** Solo escribir código, NO ejecutar comandos

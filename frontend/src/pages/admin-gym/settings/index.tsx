@@ -131,13 +131,21 @@ export const Settings = () => {
       const updatedGym = response.data.data;
       setGym(updatedGym);
 
-      alert('✅ Configuración actualizada exitosamente');
+      setLoading(false);
+
+      // Usar setTimeout para mostrar alert después de actualizar el estado
+      setTimeout(() => {
+        alert('✅ Configuración actualizada exitosamente');
+      }, 100);
     } catch (error: any) {
+      setLoading(false);
+
       const errorMessage =
         error.response?.data?.message || 'Error al actualizar la configuración';
-      alert(errorMessage);
-    } finally {
-      setLoading(false);
+
+      setTimeout(() => {
+        alert(errorMessage);
+      }, 100);
     }
   };
 

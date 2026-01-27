@@ -117,9 +117,10 @@ model Member {
   updated_at        DateTime  @updatedAt
 
   // Relaciones
-  gym          Gym          @relation(fields: [gym_id], references: [id], onDelete: Cascade)
+  gym          Gym               @relation(fields: [gym_id], references: [id], onDelete: Cascade)
   memberships  Membership[]
   attendances  Attendance[]
+  notifications NotificationLog[]
 
   @@unique([gym_id, phone])
   @@map("members")
@@ -220,23 +221,35 @@ model Attendance {
 // ============================================
 enum NotificationType {
   WELCOME
-  EXPIRING_7_DAYS
-  EXPIRING_3_DAYS
+  EXPIRING_SOON
   EXPIRED
 }
 
+enum Channel {
+  TELEGRAM
+  EMAIL
+  SMS
+}
+
+enum NotificationStatus {
+  SENT
+  FAILED
+}
+
 model NotificationLog {
-  id          String           @id @default(uuid())
+  id          String              @id @default(uuid())
   gym_id      String
-  member_id   String?
+  member_id   String
   type        NotificationType
+  channel     Channel
+  status      NotificationStatus
   message     String
-  sent_at     DateTime         @default(now())
-  success     Boolean          @default(true)
-  error_msg   String?
+  sent_at     DateTime            @default(now())
+  error       String?
 
   // Relaciones
-  gym Gym @relation(fields: [gym_id], references: [id], onDelete: Cascade)
+  gym    Gym    @relation(fields: [gym_id], references: [id], onDelete: Cascade)
+  member Member @relation(fields: [member_id], references: [id], onDelete: Cascade)
 
   @@map("notification_logs")
 }

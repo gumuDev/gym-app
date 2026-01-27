@@ -12,9 +12,18 @@ import pricingRoutes from './routes/pricing.routes';
 import membershipRoutes from './routes/membership.routes';
 import gymRoutes from './routes/gym.routes';
 import userRoutes from './routes/user.routes';
+import notificationRoutes from './routes/notification.routes';
+import statsRoutes from './routes/stats.routes';
+import reportsRoutes from './routes/reports.routes';
 
 // Middlewares
 import { errorMiddleware } from './middlewares/error.middleware';
+
+// Services
+import * as telegramService from './services/telegram.service';
+
+// Jobs
+import { initNotificationsJob } from './jobs/notifications.job';
 
 dotenv.config();
 
@@ -41,12 +50,15 @@ app.use('/api/pricing', pricingRoutes);
 app.use('/api/memberships', membershipRoutes);
 app.use('/api/gyms', gymRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/stats', statsRoutes);
+app.use('/api/reports', reportsRoutes);
 
 // Error handling middleware (debe ser el último)
 app.use(errorMiddleware);
 
 // Start server
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📍 Health check: http://localhost:${PORT}/health`);
   console.log(`🔐 Auth: http://localhost:${PORT}/api/auth`);
@@ -58,6 +70,17 @@ app.listen(PORT, () => {
   console.log(`🎫 Memberships: http://localhost:${PORT}/api/memberships`);
   console.log(`🏢 Gyms: http://localhost:${PORT}/api/gyms`);
   console.log(`👤 Users: http://localhost:${PORT}/api/users`);
+  console.log(`🔔 Notifications: http://localhost:${PORT}/api/notifications`);
+  console.log(`📊 Stats: http://localhost:${PORT}/api/stats`);
+  console.log(`📈 Reports: http://localhost:${PORT}/api/reports`);
+
+  // Inicializar bots de Telegram
+  await telegramService.initAllBots();
+
+  // Inicializar cron job de notificaciones
+  if (process.env.CRON_ENABLED !== 'false') {
+    initNotificationsJob();
+  }
 });
 
 export default app;

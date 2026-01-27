@@ -18,7 +18,7 @@ interface RecentAttendance {
     name: string;
     code: string;
   };
-  createdAt: string;
+  checked_at: string;
 }
 
 export const AdminGymDashboard = () => {
@@ -32,41 +32,27 @@ export const AdminGymDashboard = () => {
       try {
         const token = localStorage.getItem(TOKEN_KEY);
 
-        // Fetch métricas
-        const [membersRes, attendancesRes, membershipsRes] = await Promise.all([
-          axios.get(`${API_URL}/members`, {
+        // Fetch estadísticas del dashboard (incluye ingresos mensuales calculados)
+        const [statsRes, recentRes] = await Promise.all([
+          axios.get(`${API_URL}/stats/dashboard`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          axios.get(`${API_URL}/attendances/today`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          axios.get(`${API_URL}/memberships/expiring`, {
+          axios.get(`${API_URL}/attendances?limit=5`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
 
-        // Calcular métricas
-        const members = membersRes.data.data || [];
-        const activeMembers = members.filter((m: any) => m.isActive).length;
-
-        const todayAttendances = attendancesRes.data.data?.length || 0;
-        const expiringMemberships = membershipsRes.data.data?.length || 0;
-
-        // Calcular revenue del mes (simplificado)
-        const monthlyRevenue = 0; // TODO: Implementar cálculo real
-
+        // Establecer datos de estadísticas
+        const stats = statsRes.data.data;
         setData({
-          totalMembers: members.length,
-          activeMembers,
-          todayAttendances,
-          monthlyRevenue,
-          expiringMemberships,
+          totalMembers: stats.totalMembers,
+          activeMembers: stats.activeMembers,
+          todayAttendances: stats.todayAttendances,
+          monthlyRevenue: stats.monthlyRevenue,
+          expiringMemberships: stats.expiringMemberships,
         });
 
         // Últimas asistencias
-        const recentRes = await axios.get(`${API_URL}/attendances?limit=5`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
         setRecentAttendances(recentRes.data.data || []);
 
       } catch (err: any) {
@@ -111,12 +97,6 @@ export const AdminGymDashboard = () => {
       value: data?.activeMembers || 0,
       icon: '✅',
       color: 'bg-green-50 text-green-600',
-    },
-    {
-      title: 'Asistencias Hoy',
-      value: data?.todayAttendances || 0,
-      icon: '📅',
-      color: 'bg-purple-50 text-purple-600',
     },
     {
       title: 'Ingresos del Mes',
@@ -180,7 +160,10 @@ export const AdminGymDashboard = () => {
                     </p>
                   </div>
                   <p className="text-xs lg:text-sm text-gray-600 flex-shrink-0">
-                    {new Date(attendance.createdAt).toLocaleTimeString('es-ES', {
+                    {new Date(attendance.checked_at).toLocaleString('es-ES', {
+                      year: 'numeric',
+                      month: '2-digit',
+                      day: '2-digit',
                       hour: '2-digit',
                       minute: '2-digit',
                     })}

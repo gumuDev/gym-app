@@ -37,6 +37,11 @@ import { Settings } from './pages/admin-gym/settings';
 import { UsersList } from './pages/admin-gym/users/list';
 import { UsersCreate } from './pages/admin-gym/users/create';
 import { UsersEdit } from './pages/admin-gym/users/edit';
+import { NotificationsList } from './pages/admin-gym/notifications';
+import { ReportsDashboard } from './pages/admin-gym/reports';
+import { IncomeReport } from './pages/admin-gym/reports/income';
+import { AttendanceReport } from './pages/admin-gym/reports/attendance';
+import { MembersReport } from './pages/admin-gym/reports/members';
 
 // Client Pages
 import { ClientLogin } from './pages/client/login';
@@ -103,6 +108,14 @@ function App() {
             create: '/admin-gym/users/create',
             edit: '/admin-gym/users/edit/:id',
           },
+          {
+            name: 'admin-gym/notifications',
+            list: '/admin-gym/notifications',
+          },
+          {
+            name: 'admin-gym/reports',
+            list: '/admin-gym/reports',
+          },
           // Client resources
           {
             name: 'client/my-qr',
@@ -161,6 +174,11 @@ function App() {
             <Route path="users" element={<UsersList />} />
             <Route path="users/create" element={<UsersCreate />} />
             <Route path="users/edit/:id" element={<UsersEdit />} />
+            <Route path="notifications" element={<NotificationsList />} />
+            <Route path="reports" element={<ReportsDashboard />} />
+            <Route path="reports/income" element={<IncomeReport />} />
+            <Route path="reports/attendance" element={<AttendanceReport />} />
+            <Route path="reports/members" element={<MembersReport />} />
           </Route>
 
           {/* Client Routes */}

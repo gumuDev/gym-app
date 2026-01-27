@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import * as telegramService from './telegram.service';
 
 const prisma = new PrismaClient();
 
@@ -62,6 +63,25 @@ export const updateMyGym = async (
       updated_at: true,
     },
   });
+
+  // Si se actualizó el telegram_bot_token, reiniciar el bot
+  if (data.telegram_bot_token) {
+    try {
+      console.log(`🔄 Reiniciando bot de Telegram para ${gym.name}...`);
+
+      // Detener bot anterior si existe
+      await telegramService.stopBot(gymId);
+
+      // Iniciar nuevo bot con el token actualizado
+      await telegramService.initBot(gymId, data.telegram_bot_token);
+
+      console.log(`✅ Bot de Telegram actualizado para ${gym.name}`);
+    } catch (error: any) {
+      console.error(`❌ Error actualizando bot de Telegram para ${gym.name}:`, error.message);
+      // No lanzar error para no afectar la actualización del gym
+      // El token se guardó pero el bot no se inició
+    }
+  }
 
   return gym;
 };

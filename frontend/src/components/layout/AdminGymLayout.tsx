@@ -21,6 +21,8 @@ export const AdminGymLayout = ({ children }: AdminGymLayoutProps) => {
     { path: '/admin-gym/attendances', label: 'Asistencias', icon: '✅' },
     { path: '/admin-gym/attendances/scanner', label: 'Escanear QR', icon: '📷' },
     { path: '/admin-gym/users', label: 'Usuarios', icon: '👤' },
+    { path: '/admin-gym/notifications', label: 'Notificaciones', icon: '🔔' },
+    { path: '/admin-gym/reports', label: 'Reportes', icon: '📈' },
     { path: '/admin-gym/settings', label: 'Configuración', icon: '⚙️' },
   ];
 

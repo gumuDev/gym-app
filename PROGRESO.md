@@ -1,6 +1,6 @@
 # 📊 Progreso del Proyecto GymApp
 
-**Última actualización:** 2026-01-26 (Fase 1.7 100% COMPLETA + Fixes - App Cliente Mobile)
+**Última actualización:** 2026-01-27 (Mejoras Post-Fase 1.8 - Paginación + Dashboard Stats)
 
 ---
 
@@ -312,6 +312,134 @@ Aplicación mobile-first para que los clientes puedan ver su información:
 
 ---
 
+### Fase 1.8 - Notificaciones Telegram (COMPLETO ✅)
+
+Sistema de notificaciones automáticas vía Telegram Bot:
+
+#### Backend (COMPLETO ✅)
+- ✅ `telegram.service.ts` - Bot con comandos /start, /info, /desvincular
+- ✅ `notification.service.ts` - Templates de mensajes y envío
+- ✅ `notifications.job.ts` - Cron job diario (8 AM)
+- ✅ `notification.controller.ts` + `notification.routes.ts` - API endpoints
+- ✅ `package.json` - Agregado telegraf@^4.16.3
+- ✅ `.env.example` - Variables CRON_ENABLED y CRON_NOTIFICATIONS_SCHEDULE
+- ✅ `index.ts` - Inicializa bots y cron al arrancar
+- ✅ `gym.service.ts` - Reinicia bot al actualizar token
+
+#### Frontend (COMPLETO ✅)
+- ✅ `pages/admin-gym/notifications/index.tsx` - Lista de notificaciones
+- ✅ `pages/admin-gym/settings/index.tsx` - Tab Telegram (ya existía)
+- ✅ `AdminGymLayout.tsx` - Enlace en sidebar
+- ✅ `App.tsx` - Rutas y recursos de notificaciones
+
+#### Funcionalidades
+- 🤖 Comandos del bot: /start, /info, /desvincular
+- 📩 Notificaciones automáticas:
+  - Bienvenida al vincular
+  - Recordatorio 7 días antes
+  - Recordatorio 3 días antes
+  - Aviso de vencimiento (día 0)
+- ⏰ Cron job diario a las 8 AM
+- 📊 Historial de notificaciones con filtros
+- 🔧 Test manual de notificaciones
+
+**Archivos creados:**
+- `backend/src/services/telegram.service.ts`
+- `backend/src/services/notification.service.ts`
+- `backend/src/jobs/notifications.job.ts`
+- `backend/src/controllers/notification.controller.ts`
+- `backend/src/routes/notification.routes.ts`
+- `frontend/src/pages/admin-gym/notifications/index.tsx`
+- `docs/FASE-1.8-PLAN.md`
+- `FASE-1.8-COMPLETA.md`
+
+---
+
+### 🔧 Mejoras Post-Fase 1.8 (2026-01-27)
+
+#### 1. Fixes en Sistema de Notificaciones (COMPLETO ✅)
+
+**Problema:** Bot de Telegram no enviaba notificaciones aunque se inicializaba correctamente.
+
+**Solución:** `backend/src/services/telegram.service.ts`
+- ✅ Bot se guarda en `botInstances` Map ANTES de `bot.launch()`
+- ✅ Manejo robusto de errores si `launch()` falla (bot igual funciona para enviar)
+- ✅ Logs mejorados para debugging de inicialización
+- ✅ Bot disponible inmediatamente para enviar mensajes
+
+**Problema:** Membresías no se detectaban correctamente (7 días exactos vs 6-8 días).
+
+**Solución:** `backend/src/services/notification.service.ts`
+- ✅ Cambiada estrategia: buscar todas las membresías en próximos 8 días
+- ✅ Filtrado en código con rangos flexibles:
+  - 0 días: vence hoy (0 días exacto)
+  - 3 días: rango 2-4 días
+  - 7 días: rango 6-8 días
+- ✅ Usa `Math.round()` en lugar de `Math.ceil()` para cálculo preciso
+- ✅ Logs detallados con días exactos y categorización
+
+#### 2. Paginación en Notificaciones (COMPLETO ✅)
+
+**Backend:**
+- ✅ `backend/src/services/notification.service.ts` - Agregada paginación con `skip/take`
+- ✅ `backend/src/controllers/notification.controller.ts` - Query params: page, limit (max 100)
+- ✅ Respuesta con metadatos: `{ data, pagination: { total, page, limit, totalPages, hasMore, hasPrevious } }`
+- ✅ Límite default: 5 registros por página
+
+**Frontend:**
+- ✅ `frontend/src/pages/admin-gym/notifications/index.tsx` - Implementada UI de paginación
+- ✅ Controles: Anterior/Siguiente + números de página
+- ✅ Información de resultados: "Mostrando 1-5 de 150 notificaciones"
+- ✅ Ventana inteligente de páginas (muestra hasta 5 números)
+- ✅ Loading states durante transiciones
+- ✅ Filtros se integran con paginación
+- ✅ Stats totales con requests separados
+
+**Mejoras:**
+- 🚀 Performance: Solo carga 5 registros a la vez
+- 📊 Escalabilidad: Funciona con miles de notificaciones
+- 💾 Reduce transferencia de datos y memoria
+- 🎯 UX mejorada con navegación clara
+
+#### 3. Dashboard con Ingresos Reales (COMPLETO ✅)
+
+**Problema:** Dashboard mostraba `monthlyRevenue = 0` (hardcoded).
+
+**Solución Backend:**
+- ✅ `backend/src/services/stats.service.ts` - Nuevo servicio de estadísticas
+- ✅ `backend/src/controllers/stats.controller.ts` - Nuevo controlador
+- ✅ `backend/src/routes/stats.routes.ts` - Nuevas rutas protegidas
+- ✅ `backend/src/index.ts` - Rutas montadas en `/api/stats`
+
+**Endpoint:** `GET /api/stats/dashboard`
+
+Calcula en el backend:
+- 💰 **Ingresos mensuales:** Suma de `amount_paid` de membresías creadas este mes
+- 👥 **Total miembros:** Conteo total del gym
+- ✅ **Miembros activos:** Conteo de `is_active = true`
+- 📅 **Asistencias de hoy:** Conteo del día actual
+- ⚠️ **Por vencer:** Membresías activas en próximos 7 días
+
+**Solución Frontend:**
+- ✅ `frontend/src/pages/admin-gym/dashboard/index.tsx` - Usa nuevo endpoint
+- ✅ Reemplaza 3 requests por 1 solo
+- ✅ Cálculos en backend (más eficiente y preciso)
+- ✅ Ingresos reales mostrados en formato `Bs XX.XX`
+
+**Archivos creados:**
+- `backend/src/services/stats.service.ts`
+- `backend/src/controllers/stats.controller.ts`
+- `backend/src/routes/stats.routes.ts`
+
+**Archivos modificados:**
+- `backend/src/index.ts` - Agregada ruta `/api/stats`
+- `backend/src/services/notification.service.ts` - Detección mejorada de membresías
+- `backend/src/services/telegram.service.ts` - Fix de inicialización del bot
+- `frontend/src/pages/admin-gym/dashboard/index.tsx` - Usa endpoint de stats
+- `frontend/src/pages/admin-gym/notifications/index.tsx` - Paginación completa
+
+---
+
 ## 🔜 Siguiente Paso
 
 **Fases Completadas:**
@@ -322,12 +450,15 @@ Aplicación mobile-first para que los clientes puedan ver su información:
 - ✅ Fase 1.5 - Frontend Super Admin
 - ✅ Fase 1.6 - Frontend Admin Gym (8 pasos)
 - ✅ Fase 1.7 - Frontend App Cliente Mobile (7 pasos)
+- ✅ Fase 1.8 - Notificaciones Telegram
 
-**Siguiente fase:** Fase 1.8 - Notificaciones Telegram
+**🎉 FASE 1 MVP COMPLETA AL 100%**
 
-O continuar con:
-- Deploy (Railway + Vercel)
-- Mejoras adicionales (PWA, dark mode, etc.)
+**Próximas opciones:**
+- Deploy a Producción (Railway + Vercel)
+- Fase 2 - Progreso Físico
+- Fase 3 - Clases Grupales
+- Mejoras adicionales (PWA, dark mode, WhatsApp, etc.)
 
 ---
 
@@ -692,8 +823,5 @@ Se mejoró el scanner de QR para soportar **dos modos de escaneo**:
 - ✅ Procesar screenshot del QR
 - ✅ Funciona en dispositivos sin cámara o con permisos denegados
 - ✅ Validación de imagen clara vs borrosa
-
-#### Testing
-Ver documento: `TESTING-QR-UPLOAD.md`
 
 ---

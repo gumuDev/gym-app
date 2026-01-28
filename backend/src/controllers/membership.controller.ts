@@ -35,7 +35,7 @@ export const getMembershipById = async (req: Request, res: Response): Promise<vo
   try {
     const gymId = req.gymId!;
     const { id } = req.params;
-    const membership = await membershipService.getMembershipById(gymId, id);
+    const membership = await membershipService.getMembershipById(gymId, id as string);
     sendSuccess(res, membership);
   } catch (error: any) {
     sendNotFound(res, error.message);
@@ -49,7 +49,7 @@ export const getMembershipsByMember = async (req: Request, res: Response): Promi
   try {
     const gymId = req.gymId!;
     const { memberId } = req.params;
-    const memberships = await membershipService.getMembershipsByMember(gymId, memberId);
+    const memberships = await membershipService.getMembershipsByMember(gymId, memberId as string);
     sendSuccess(res, memberships);
   } catch (error: any) {
     sendServerError(res, error.message);
@@ -80,7 +80,7 @@ export const renewMembership = async (req: Request, res: Response): Promise<void
 
     const membership = await membershipService.renewMembership(
       gymId,
-      id,
+      id as string,
       num_months,
       amount_paid,
       payment_method,

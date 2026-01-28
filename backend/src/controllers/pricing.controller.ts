@@ -36,7 +36,7 @@ export const updatePricingPlan = async (req: Request, res: Response): Promise<vo
     const gymId = req.gymId!;
     const { id } = req.params;
     const { price } = req.body;
-    const plan = await pricingService.updatePricingPlan(gymId, id, price);
+    const plan = await pricingService.updatePricingPlan(gymId, id as string, price);
     sendSuccess(res, plan, 'Plan actualizado exitosamente');
   } catch (error: any) {
     sendError(res, error.message);
@@ -50,7 +50,7 @@ export const deletePricingPlan = async (req: Request, res: Response): Promise<vo
   try {
     const gymId = req.gymId!;
     const { id } = req.params;
-    await pricingService.deletePricingPlan(gymId, id);
+    await pricingService.deletePricingPlan(gymId, id as string);
     sendSuccess(res, null, 'Plan eliminado exitosamente');
   } catch (error: any) {
     sendError(res, error.message);

@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { startOfMonth, endOfMonth, format, startOfDay, endOfDay } from 'date-fns';
+import { format, startOfDay, endOfDay } from 'date-fns';
 import { es } from 'date-fns/locale';
 
 const prisma = new PrismaClient();

@@ -14,6 +14,8 @@ interface LoginResponse {
     role: string;
     gymId?: string;
     memberId?: string;
+    code?: string;
+    phone?: string;
   };
 }
 
@@ -138,7 +140,7 @@ export const loginMember = async (code?: string, phone?: string): Promise<LoginR
       name: member.name,
       code: member.code,
       phone: member.phone,
-      email: member.email,
+      email: member.email || undefined,
       role: 'member',
       gymId: member.gym_id,
       memberId: member.id,
@@ -149,7 +151,7 @@ export const loginMember = async (code?: string, phone?: string): Promise<LoginR
 /**
  * Refrescar token
  */
-export const refreshAccessToken = async (refreshToken: string): Promise<{ token: string }> => {
+export const refreshAccessToken = async (_refreshToken: string): Promise<{ token: string }> => {
   // TODO: Implementar verificación de refresh token
   // Por ahora, generar nuevo token basado en el refresh token
   throw new Error('Refresh token no implementado aún');

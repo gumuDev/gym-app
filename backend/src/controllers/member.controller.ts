@@ -43,7 +43,7 @@ export const getMemberById = async (req: Request, res: Response): Promise<void> 
   try {
     const gymId = req.gymId!;
     const { id } = req.params;
-    const member = await memberService.getMemberById(gymId, id);
+    const member = await memberService.getMemberById(gymId, id as string);
     sendSuccess(res, member);
   } catch (error: any) {
     sendNotFound(res, error.message);
@@ -57,7 +57,7 @@ export const getMemberById = async (req: Request, res: Response): Promise<void> 
 export const getMemberByCode = async (req: Request, res: Response): Promise<void> => {
   try {
     const { code } = req.params;
-    const member = await memberService.getMemberByCode(code);
+    const member = await memberService.getMemberByCode(code as string);
     sendSuccess(res, member);
   } catch (error: any) {
     sendNotFound(res, error.message);
@@ -72,7 +72,7 @@ export const updateMember = async (req: Request, res: Response): Promise<void> =
   try {
     const gymId = req.gymId!;
     const { id } = req.params;
-    const member = await memberService.updateMember(gymId, id, req.body);
+    const member = await memberService.updateMember(gymId, id as string, req.body);
     sendSuccess(res, member, 'Miembro actualizado exitosamente');
   } catch (error: any) {
     sendError(res, error.message);
@@ -87,7 +87,7 @@ export const deleteMember = async (req: Request, res: Response): Promise<void> =
   try {
     const gymId = req.gymId!;
     const { id } = req.params;
-    const member = await memberService.deleteMember(gymId, id);
+    const member = await memberService.deleteMember(gymId, id as string);
     sendSuccess(res, member, 'Miembro desactivado exitosamente');
   } catch (error: any) {
     sendError(res, error.message);

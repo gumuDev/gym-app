@@ -6,7 +6,7 @@ import { sendSuccess, sendError, sendServerError } from '../utils/responseHelper
  * GET /api/super-admin/dashboard
  * Obtener métricas del dashboard
  */
-export const getDashboard = async (req: Request, res: Response): Promise<void> => {
+export const getDashboard = async (_req: Request, res: Response): Promise<void> => {
   try {
     const metrics = await superAdminService.getDashboardMetrics();
     sendSuccess(res, metrics);
@@ -19,7 +19,7 @@ export const getDashboard = async (req: Request, res: Response): Promise<void> =
  * GET /api/super-admin/gyms
  * Listar todos los gimnasios
  */
-export const getGyms = async (req: Request, res: Response): Promise<void> => {
+export const getGyms = async (_req: Request, res: Response): Promise<void> => {
   try {
     const gyms = await superAdminService.getAllGyms();
     sendSuccess(res, gyms);
@@ -35,7 +35,7 @@ export const getGyms = async (req: Request, res: Response): Promise<void> => {
 export const getGymById = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
-    const gym = await superAdminService.getGymById(id);
+    const gym = await superAdminService.getGymById(id as string);
     sendSuccess(res, gym);
   } catch (error: any) {
     sendError(res, error.message, 404);
@@ -62,7 +62,7 @@ export const createGym = async (req: Request, res: Response): Promise<void> => {
 export const updateGym = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
-    const gym = await superAdminService.updateGym(id, req.body);
+    const gym = await superAdminService.updateGym(id as string, req.body);
     sendSuccess(res, gym, 'Gimnasio actualizado exitosamente');
   } catch (error: any) {
     sendError(res, error.message);
@@ -76,7 +76,7 @@ export const updateGym = async (req: Request, res: Response): Promise<void> => {
 export const toggleGym = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
-    const gym = await superAdminService.toggleGymStatus(id);
+    const gym = await superAdminService.toggleGymStatus(id as string);
     const message = gym.is_active ? 'Gimnasio activado' : 'Gimnasio suspendido';
     sendSuccess(res, gym, message);
   } catch (error: any) {
@@ -88,7 +88,7 @@ export const toggleGym = async (req: Request, res: Response): Promise<void> => {
  * GET /api/super-admin/invoices
  * Listar todas las facturas
  */
-export const getInvoices = async (req: Request, res: Response): Promise<void> => {
+export const getInvoices = async (_req: Request, res: Response): Promise<void> => {
   try {
     const invoices = await superAdminService.getAllInvoices();
     sendSuccess(res, invoices);
@@ -101,7 +101,7 @@ export const getInvoices = async (req: Request, res: Response): Promise<void> =>
  * POST /api/super-admin/invoices/generate
  * Generar facturas mensuales
  */
-export const generateInvoices = async (req: Request, res: Response): Promise<void> => {
+export const generateInvoices = async (_req: Request, res: Response): Promise<void> => {
   try {
     const invoices = await superAdminService.generateMonthlyInvoices();
     sendSuccess(res, invoices, `${invoices.length} facturas generadas exitosamente`);

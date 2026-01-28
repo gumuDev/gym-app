@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import * as notificationService from '../services/notification.service';
-import { sendSuccess, sendError, sendServerError } from '../utils/responseHelpers';
+import { sendSuccess, sendServerError } from '../utils/responseHelpers';
 import { NotificationType, NotificationStatus } from '@prisma/client';
 
 declare global {

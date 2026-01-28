@@ -24,7 +24,7 @@ export const getUserById = async (req: Request, res: Response): Promise<void> =>
   try {
     const gymId = req.gymId!;
     const { id } = req.params;
-    const user = await userService.getUserById(gymId, id);
+    const user = await userService.getUserById(gymId, id as string);
     sendSuccess(res, user);
   } catch (error: any) {
     sendError(res, error.message);
@@ -55,7 +55,7 @@ export const updateUser = async (req: Request, res: Response): Promise<void> => 
     const gymId = req.gymId!;
     const { id } = req.params;
     const data = req.body;
-    const user = await userService.updateUser(gymId, id, data);
+    const user = await userService.updateUser(gymId, id as string, data);
     sendSuccess(res, user, 'Usuario actualizado exitosamente');
   } catch (error: any) {
     sendError(res, error.message);
@@ -70,7 +70,7 @@ export const deleteUser = async (req: Request, res: Response): Promise<void> => 
   try {
     const gymId = req.gymId!;
     const { id } = req.params;
-    const user = await userService.deleteUser(gymId, id);
+    const user = await userService.deleteUser(gymId, id as string);
     sendSuccess(res, user, 'Usuario desactivado exitosamente');
   } catch (error: any) {
     sendError(res, error.message);
@@ -85,7 +85,7 @@ export const activateUser = async (req: Request, res: Response): Promise<void> =
   try {
     const gymId = req.gymId!;
     const { id } = req.params;
-    const user = await userService.activateUser(gymId, id);
+    const user = await userService.activateUser(gymId, id as string);
     sendSuccess(res, user, 'Usuario activado exitosamente');
   } catch (error: any) {
     sendError(res, error.message);

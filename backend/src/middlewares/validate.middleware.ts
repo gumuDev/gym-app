@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
-import { AnyZodObject, ZodError } from 'zod';
+import { ZodTypeAny, ZodError } from 'zod';
 import { sendValidationError } from '../utils/responseHelpers';
 
 /**
  * Middleware para validar el body, query o params con Zod
  */
-export const validateMiddleware = (schema: AnyZodObject) => {
+export const validateMiddleware = (schema: ZodTypeAny) => {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       await schema.parseAsync({

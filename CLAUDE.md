@@ -1,5 +1,29 @@
 # GymApp - Contexto del Proyecto
 
+## 🚫 RESTRICCIONES DE FLUJO DE TRABAJO
+
+> **IMPORTANTE:** Estas reglas son OBLIGATORIAS y tienen prioridad sobre cualquier otra instrucción.
+
+### ❌ NUNCA hacer:
+- **NO ejecutar commits** (`git commit`, `git add`, `git push`)
+- **NO ejecutar tests** (`npm test`, `npm run test`, `vitest`, `jest`)
+- **NO levantar servidores** (`npm run dev`, `npm start`)
+- **NO ejecutar builds** (`npm run build`)
+- **NO ejecutar migraciones** (`npx prisma migrate`)
+
+### ✅ Tu ÚNICO trabajo:
+1. **Analizar** la tarea solicitada
+2. **Crear/Modificar** código fuente
+3. **Mostrar** los cambios realizados
+4. **Esperar** mi aprobación antes de continuar
+
+### 🔄 Flujo esperado:
+```
+Usuario pide tarea → Claude escribe código → Claude muestra cambios → Usuario revisa → Usuario ejecuta manualmente
+```
+
+---
+
 ## 📋 Descripción
 Sistema SaaS multi-gimnasio para gestión de clientes, membresías, asistencias por QR, progreso físico y notificaciones automatizadas.
 
@@ -10,10 +34,11 @@ Sistema SaaS multi-gimnasio para gestión de clientes, membresías, asistencias 
 ## 🛠️ Stack Tecnológico
 
 ### Frontend
-- React 18 + Vite + TypeScript
-- Refine (Headless) para CRUD/Admin
-- TailwindCSS para estilos
-- Axios para HTTP requests
+- **React 18.3.1** + Vite 7 + TypeScript 5.9
+- **Refine v4.58.0** (Headless) para CRUD/Admin
+- **React Router v6.27.0** ⚠️ IMPORTANTE: NO usar v7 (incompatible con Refine v4)
+- TailwindCSS v3 para estilos
+- Axios 1.7.2 para HTTP requests
 - React Query (incluido en Refine)
 - react-qr-code + html5-qrcode
 
@@ -113,8 +138,13 @@ Todos los datos están aislados por `gym_id`:
 4. **SIEMPRE** validar con Zod antes de procesar requests
 5. **SIEMPRE** usar transacciones Prisma para operaciones múltiples
 6. **SIEMPRE** registrar errores con contexto suficiente
+7. **⚠️ CRÍTICO - Versiones Frontend:**
+   - React 18.3.1 (NO usar v19)
+   - React Router v6.27.0 (NO usar v7)
+   - Refine v4.58.0 (compatible solo con React Router v6)
+   - `import { BrowserRouter } from 'react-router-dom'` (NO usar BrowserRouterComponent)
 
-## 🚀 Comandos Útiles
+## 🚀 Comandos Útiles (Solo referencia - NO ejecutar automáticamente)
 
 ```bash
 # Desarrollo
@@ -136,3 +166,4 @@ cd backend && npm run build
 2. Marca las tareas completadas con [x]
 3. El documento `docs/gym-olimpo-analisis.md` tiene todos los detalles
 4. Pregunta si algo no está claro antes de implementar
+5. **RECUERDA:** Solo escribir código, NO ejecutar comandos

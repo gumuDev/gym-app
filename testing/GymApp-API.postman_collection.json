@@ -1,0 +1,379 @@
+{
+  "info": {
+    "name": "GymApp API",
+    "description": "Colección de endpoints para probar la API de GymApp",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["health"]
+        }
+      }
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login Super Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('token', response.data.token);",
+                  "    console.log('Token guardado:', response.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@gymapp.com\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login Admin Gym",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('token', response.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@olimpo.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login Member (por código)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('token', response.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"GYM-001\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login/member",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login", "member"]
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"tu-refresh-token-aqui\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/refresh",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "refresh"]
+            }
+          }
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@gymapp.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/forgot-password",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "forgot-password"]
+            }
+          }
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"reset-token-aqui\",\n  \"newPassword\": \"newpassword123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/reset-password",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "reset-password"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Super Admin",
+      "item": [
+        {
+          "name": "Dashboard - Métricas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/dashboard",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "super-admin", "dashboard"]
+            }
+          }
+        },
+        {
+          "name": "Listar Gimnasios",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/gyms",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "super-admin", "gyms"]
+            }
+          }
+        },
+        {
+          "name": "Crear Gimnasio",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Gym Olimpo\",\n  \"email\": \"contacto@olimpo.com\",\n  \"phone\": \"+51 999 888 777\",\n  \"address\": \"Av. Principal 123, Lima\",\n  \"adminName\": \"Carlos Pérez\",\n  \"adminEmail\": \"admin@olimpo.com\",\n  \"adminPassword\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/gyms",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "super-admin", "gyms"]
+            }
+          }
+        },
+        {
+          "name": "Ver Detalle de Gimnasio",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/gyms/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "super-admin", "gyms", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "gym-id-aqui"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Actualizar Gimnasio",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Gym Olimpo Updated\",\n  \"phone\": \"+51 999 888 999\",\n  \"telegram_bot_token\": \"bot-token-aqui\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/gyms/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "super-admin", "gyms", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "gym-id-aqui"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Activar/Suspender Gimnasio",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/gyms/:id/toggle",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "super-admin", "gyms", ":id", "toggle"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "gym-id-aqui"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Listar Facturas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/invoices",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "super-admin", "invoices"]
+            }
+          }
+        },
+        {
+          "name": "Generar Facturas Mensuales",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/super-admin/invoices/generate",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "super-admin", "invoices", "generate"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

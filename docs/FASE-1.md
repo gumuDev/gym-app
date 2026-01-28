@@ -1,34 +1,49 @@
 # Fase 1: MVP + Super Admin
 
-**Duración estimada:** 7-9 semanas  
+**Duración estimada:** 7-9 semanas
 **Estado:** 🔄 En progreso
+
+**Última actualización:** 2026-01-22
+
+## 📍 Estado Actual
+
+### ✅ Completado:
+- **1.1 Setup Inicial** - Frontend y Backend configurados
+- **1.2 Backend - Base de Datos** - Prisma Schema, Middlewares y Utilidades
+
+### 🔜 Siguiente:
+- **1.3 Backend - Auth y Super Admin** - Rutas de autenticación y CRUD de gimnasios
+
+### 🔐 Credenciales actuales:
+- Super Admin: `admin@gymapp.com` / `admin123`
+- PostgreSQL: `gymapp` / `gymapp123` en `localhost:5432`
 
 ---
 
 ## 1.1 Setup Inicial (4-5 días)
 
 ### Estructura del Proyecto
-- [ ] Crear carpeta `gym-app/` con estructura monorepo
-- [ ] Crear `frontend/` con Vite + React + TypeScript
-- [ ] Crear `backend/` con Node.js + Express + TypeScript
-- [ ] Configurar TailwindCSS en frontend
-- [ ] Crear `docker-compose.yml` para PostgreSQL local
-- [ ] Configurar archivos `.env.example` en ambos proyectos
-- [ ] Configurar ESLint y Prettier en ambos proyectos
-- [ ] Crear `.gitignore` apropiado
+- [x] Crear carpeta `gym-app/` con estructura monorepo
+- [x] Crear `frontend/` con Vite + React + TypeScript
+- [x] Crear `backend/` con Node.js + Express + TypeScript
+- [x] Configurar TailwindCSS en frontend
+- [x] Crear `docker-compose.yml` para PostgreSQL local
+- [x] Configurar archivos `.env.example` en ambos proyectos
+- [x] Configurar ESLint y Prettier en ambos proyectos
+- [x] Crear `.gitignore` apropiado
 
 ### Frontend Setup
-- [ ] Instalar Refine con data provider REST
+- [x] Instalar Refine con data provider REST
 - [ ] Configurar Axios instance con interceptors
 - [ ] Configurar React Router
 - [ ] Crear estructura de carpetas (pages, components, hooks, utils)
 - [ ] Crear componentes UI base (Button, Input, Card, Modal)
 
 ### Backend Setup
-- [ ] Configurar Express con TypeScript
+- [x] Configurar Express con TypeScript
 - [ ] Configurar Prisma ORM
-- [ ] Crear estructura de carpetas (routes, controllers, services, middlewares)
-- [ ] Configurar CORS, JSON parsing, error handling
+- [x] Crear estructura de carpetas (routes, controllers, services, middlewares)
+- [x] Configurar CORS, JSON parsing, error handling
 - [ ] Crear utilidades (jwt.ts, hash.ts, response helpers)
 
 ---
@@ -36,61 +51,61 @@
 ## 1.2 Backend - Base de Datos (1 semana)
 
 ### Prisma Schema
-- [ ] Crear modelo `SuperAdmin`
-- [ ] Crear modelo `SaasConfig`
-- [ ] Crear modelo `Gym`
-- [ ] Crear modelo `User`
-- [ ] Crear modelo `Member`
-- [ ] Crear modelo `Discipline`
-- [ ] Crear modelo `PricingPlan`
-- [ ] Crear modelo `Membership`
-- [ ] Crear modelo `Attendance`
-- [ ] Crear modelo `NotificationLog`
-- [ ] Crear modelo `GymInvoice`
-- [ ] Ejecutar primera migración
-- [ ] Crear seed con super admin inicial
+- [x] Crear modelo `SuperAdmin`
+- [x] Crear modelo `SaasConfig`
+- [x] Crear modelo `Gym`
+- [x] Crear modelo `User`
+- [x] Crear modelo `Member`
+- [x] Crear modelo `Discipline`
+- [x] Crear modelo `PricingPlan`
+- [x] Crear modelo `Membership`
+- [x] Crear modelo `Attendance`
+- [x] Crear modelo `NotificationLog`
+- [x] Crear modelo `GymInvoice`
+- [x] Ejecutar primera migración
+- [x] Crear seed con super admin inicial
 
 ### Middlewares
-- [ ] `auth.middleware.ts` - Verificar JWT
-- [ ] `superAdmin.middleware.ts` - Solo super admin
-- [ ] `gym.middleware.ts` - Extraer gymId y filtrar
-- [ ] `role.middleware.ts` - Verificar roles permitidos
-- [ ] `validate.middleware.ts` - Validar con Zod
-- [ ] `error.middleware.ts` - Manejo global de errores
+- [x] `auth.middleware.ts` - Verificar JWT
+- [x] `superAdmin.middleware.ts` - Solo super admin
+- [x] `gym.middleware.ts` - Extraer gymId y filtrar
+- [x] `role.middleware.ts` - Verificar roles permitidos
+- [x] `validate.middleware.ts` - Validar con Zod
+- [x] `error.middleware.ts` - Manejo global de errores
 
 ### Utilidades
-- [ ] `jwt.ts` - Generar y verificar tokens
-- [ ] `hash.ts` - Hash y compare passwords
-- [ ] `codeGenerator.ts` - Generar códigos GYM-001
-- [ ] `responseHelpers.ts` - Respuestas consistentes
+- [x] `jwt.ts` - Generar y verificar tokens
+- [x] `hash.ts` - Hash y compare passwords
+- [x] `codeGenerator.ts` - Generar códigos GYM-001
+- [x] `responseHelpers.ts` - Respuestas consistentes
 
 ---
 
 ## 1.3 Backend - Auth y Super Admin (1 semana)
 
 ### Auth Routes `/api/auth`
-- [ ] `POST /login` - Login super admin y gym users
-- [ ] `POST /login/member` - Login member por código
-- [ ] `POST /refresh` - Refrescar token
-- [ ] `POST /forgot-password` - Solicitar reset
-- [ ] `POST /reset-password` - Cambiar password
+- [x] `POST /login` - Login super admin y gym users
+- [x] `POST /login/member` - Login member por código
+- [x] `POST /refresh` - Refrescar token (estructura creada)
+- [x] `POST /forgot-password` - Solicitar reset (estructura creada)
+- [x] `POST /reset-password` - Cambiar password (estructura creada)
 
 ### Auth Service
-- [ ] Validar credenciales
-- [ ] Generar JWT con datos correctos según rol
-- [ ] Manejar refresh tokens
-- [ ] Generar tokens de reset password
-- [ ] Enviar emails de reset
+- [x] Validar credenciales
+- [x] Generar JWT con datos correctos según rol
+- [ ] Manejar refresh tokens (pendiente implementar lógica)
+- [ ] Generar tokens de reset password (pendiente implementar)
+- [ ] Enviar emails de reset (pendiente Email Service)
 
 ### Super Admin Routes `/api/super-admin`
-- [ ] `GET /dashboard` - Métricas globales (gyms, members, MRR)
-- [ ] `GET /gyms` - Listar todos los gyms
-- [ ] `POST /gyms` - Crear gym + usuario admin
-- [ ] `GET /gyms/:id` - Detalle de un gym
-- [ ] `PATCH /gyms/:id` - Actualizar gym
-- [ ] `POST /gyms/:id/toggle` - Activar/suspender gym
-- [ ] `GET /invoices` - Ver facturas
-- [ ] `POST /invoices/generate` - Generar facturas mensuales
+- [x] `GET /dashboard` - Métricas globales (gyms, members, MRR)
+- [x] `GET /gyms` - Listar todos los gyms
+- [x] `POST /gyms` - Crear gym + usuario admin
+- [x] `GET /gyms/:id` - Detalle de un gym
+- [x] `PATCH /gyms/:id` - Actualizar gym
+- [x] `POST /gyms/:id/toggle` - Activar/suspender gym
+- [x] `GET /invoices` - Ver facturas
+- [x] `POST /invoices/generate` - Generar facturas mensuales
 
 ### Email Service
 - [ ] Configurar Resend/Nodemailer
@@ -103,39 +118,39 @@
 ## 1.4 Backend - Admin Gym Core (1 semana)
 
 ### Members Routes `/api/members`
-- [ ] `GET /` - Listar members del gym
-- [ ] `POST /` - Crear member (genera código automático)
-- [ ] `GET /:id` - Detalle de member
-- [ ] `PATCH /:id` - Actualizar member
-- [ ] `DELETE /:id` - Desactivar member
-- [ ] `GET /code/:code` - Buscar por código (para QR)
+- [x] `GET /` - Listar members del gym
+- [x] `POST /` - Crear member (genera código automático)
+- [x] `GET /:id` - Detalle de member
+- [x] `PATCH /:id` - Actualizar member
+- [x] `DELETE /:id` - Desactivar member
+- [x] `GET /code/:code` - Buscar por código (para QR)
 
 ### Disciplines Routes `/api/disciplines`
-- [ ] `GET /` - Listar disciplinas
-- [ ] `POST /` - Crear disciplina
-- [ ] `PATCH /:id` - Actualizar
-- [ ] `DELETE /:id` - Desactivar
+- [x] `GET /` - Listar disciplinas
+- [x] `POST /` - Crear disciplina
+- [x] `PATCH /:id` - Actualizar
+- [x] `DELETE /:id` - Desactivar
 
 ### Pricing Routes `/api/pricing`
-- [ ] `GET /` - Listar planes de precios
-- [ ] `POST /` - Crear plan
-- [ ] `PATCH /:id` - Actualizar
-- [ ] `DELETE /:id` - Eliminar
-- [ ] `GET /calculate` - Calcular precio (personas, meses)
+- [x] `GET /` - Listar planes de precios
+- [x] `POST /` - Crear plan
+- [x] `PATCH /:id` - Actualizar
+- [x] `DELETE /:id` - Eliminar
+- [x] `GET /calculate` - Calcular precio (personas, meses)
 
 ### Memberships Routes `/api/memberships`
-- [ ] `GET /` - Listar membresías
-- [ ] `POST /` - Crear membresía (registrar pago)
-- [ ] `GET /:id` - Detalle
-- [ ] `GET /member/:memberId` - Membresías de un member
-- [ ] `GET /expiring` - Por vencer (7 días)
-- [ ] `POST /:id/renew` - Renovar membresía
+- [x] `GET /` - Listar membresías
+- [x] `POST /` - Crear membresía (registrar pago)
+- [x] `GET /:id` - Detalle
+- [x] `GET /member/:memberId` - Membresías de un member
+- [x] `GET /expiring` - Por vencer (7 días)
+- [x] `POST /:id/renew` - Renovar membresía
 
 ### Attendances Routes `/api/attendances`
-- [ ] `POST /` - Registrar asistencia (scan QR)
-- [ ] `GET /` - Listar asistencias
-- [ ] `GET /member/:memberId` - Asistencias de un member
-- [ ] `GET /today` - Asistencias de hoy
+- [x] `POST /` - Registrar asistencia (scan QR)
+- [x] `GET /` - Listar asistencias
+- [x] `GET /member/:memberId` - Asistencias de un member
+- [x] `GET /today` - Asistencias de hoy
 
 ### Gym Routes `/api/gyms`
 - [ ] `GET /me` - Info del gym actual

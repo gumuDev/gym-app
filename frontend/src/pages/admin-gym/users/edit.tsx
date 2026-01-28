@@ -6,6 +6,7 @@ import { Card } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
 import { TOKEN_KEY, API_URL } from '../../../constants/auth';
+import { showError, showSuccess } from '../../../utils/notification';
 import axios from 'axios';
 
 interface User {
@@ -42,7 +43,7 @@ export const UsersEdit = () => {
   useEffect(() => {
     fetchUser();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [id]);
 
   const fetchUser = async () => {
     try {
@@ -62,7 +63,7 @@ export const UsersEdit = () => {
         role: userData.role.toLowerCase() as 'receptionist' | 'trainer',
       });
     } catch (error: any) {
-      alert('Error al cargar el usuario');
+      showError('Error al cargar el usuario');
       push('/admin-gym/users');
     } finally {
       setLoadingData(false);
@@ -135,11 +136,11 @@ export const UsersEdit = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      alert('✅ Usuario actualizado exitosamente');
+      showSuccess('Usuario actualizado exitosamente');
       push('/admin-gym/users');
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || 'Error al actualizar usuario';
-      alert(errorMessage);
+      showError(errorMessage);
     } finally {
       setLoading(false);
     }

@@ -6,6 +6,7 @@ import { Card } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
 import { TOKEN_KEY, API_URL } from '../../../constants/auth';
+import { showError, showSuccess } from '../../../utils/notification';
 import axios from 'axios';
 
 interface Member {
@@ -84,7 +85,7 @@ export const MembershipsRenew = () => {
       const foundMembership = memberships.find((m: Membership) => m.id === id);
 
       if (!foundMembership) {
-        alert('Membresía no encontrada');
+        showError('Membresía no encontrada');
         push('/admin-gym/memberships');
         return;
       }
@@ -111,7 +112,7 @@ export const MembershipsRenew = () => {
         }
       }
     } catch (error: any) {
-      alert('Error al cargar la membresía');
+      showError('Error al cargar la membresía');
       push('/admin-gym/memberships');
     } finally {
       setLoadingData(false);
@@ -184,12 +185,12 @@ export const MembershipsRenew = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      alert('Membresía renovada exitosamente');
+      showSuccess('Membresía renovada exitosamente');
       push('/admin-gym/memberships');
     } catch (error: any) {
       const errorMessage =
         error.response?.data?.message || 'Error al renovar la membresía';
-      alert(errorMessage);
+      showError(errorMessage);
     } finally {
       setLoading(false);
     }

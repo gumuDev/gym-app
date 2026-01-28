@@ -4,6 +4,7 @@ import { AdminGymLayout } from '../../../components/layout/AdminGymLayout';
 import { Card } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
 import { TOKEN_KEY, API_URL } from '../../../constants/auth';
+import { showSuccess, showWarning } from '../../../utils/notification';
 import axios from 'axios';
 import { Html5Qrcode } from 'html5-qrcode';
 
@@ -88,7 +89,7 @@ export const AttendancesScanner = () => {
     await handleCodeScanned(decodedText);
   };
 
-  const onScanFailure = (error: any) => {
+  const onScanFailure = (_error: any) => {
     // Ignore scan failures (happens constantly while scanning)
   };
 
@@ -161,14 +162,35 @@ export const AttendancesScanner = () => {
         }
       );
 
-      alert(`✅ Asistencia registrada para ${scanResult.member.name}`);
+      showSuccess(`✅ Asistencia registrada para ${scanResult.member.name}`);
 
       // Reset and start scanning again
       setScanResult(null);
       await startScanner();
     } catch (error: any) {
+      // Handle duplicate attendance (409)
+      if (error.response?.status === 409 && error.response?.data?.alreadyRegistered) {
+        const registeredAt = new Date(error.response.data.registeredAt);
+        const timeString = registeredAt.toLocaleTimeString('es-ES', {
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+
+        showWarning(
+          `⚠️ ${scanResult.member.name} ya registró asistencia hoy a las ${timeString}`
+        );
+
+        // Reset and start scanning again
+        setScanResult(null);
+        if (scanMode === 'camera') {
+          await startScanner();
+        }
+        return;
+      }
+
+      // Handle other errors
       const errorMessage =
-        error.response?.data?.message || 'Error al registrar asistencia';
+        error.response?.data?.error || error.response?.data?.message || 'Error al registrar asistencia';
       setError(errorMessage);
     } finally {
       setLoading(false);

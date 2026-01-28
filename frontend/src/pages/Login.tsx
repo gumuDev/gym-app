@@ -15,9 +15,12 @@ export const Login = () => {
     e.preventDefault();
     setError('');
 
-    login(
+    await login(
       { email, password },
       {
+        onSuccess: (data) => {
+           if (!data.success) setError(data?.error?.message || 'Error al iniciar session');
+        },
         onError: (error: any) => {
           setError(error?.message || 'Error al iniciar sesión');
         },

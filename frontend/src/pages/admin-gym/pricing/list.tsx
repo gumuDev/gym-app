@@ -3,6 +3,7 @@ import { AdminGymLayout } from '../../../components/layout/AdminGymLayout';
 import { Card } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
 import { TOKEN_KEY, API_URL } from '../../../constants/auth';
+import { showError } from '../../../utils/notification';
 import axios from 'axios';
 
 interface PricingPlan {
@@ -39,7 +40,7 @@ export const PricingList = () => {
       });
       tableQueryResult.refetch();
     } catch (error: any) {
-      alert(error.response?.data?.message || 'Error al eliminar plan');
+      showError(error.response?.data?.message || 'Error al eliminar plan');
     }
   };
 

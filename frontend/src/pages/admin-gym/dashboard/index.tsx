@@ -3,13 +3,24 @@ import { AdminGymLayout } from '../../../components/layout/AdminGymLayout';
 import { Card } from '../../../components/ui/Card';
 import { TOKEN_KEY, API_URL } from '../../../constants/auth';
 import axios from 'axios';
+import {
+  LineChart,
+  Line,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts';
 
 interface DashboardData {
   totalMembers: number;
   activeMembers: number;
   todayAttendances: number;
   monthlyRevenue: number;
-  expiringMemberships: number;
 }
 
 interface RecentAttendance {
@@ -21,9 +32,22 @@ interface RecentAttendance {
   checked_at: string;
 }
 
+interface IncomeChartData {
+  day: string;
+  income: number;
+}
+
+interface DisciplineData {
+  name: string;
+  value: number;
+  percentage: number;
+}
+
 export const AdminGymDashboard = () => {
   const [data, setData] = useState<DashboardData | null>(null);
   const [recentAttendances, setRecentAttendances] = useState<RecentAttendance[]>([]);
+  const [incomeChartData, setIncomeChartData] = useState<IncomeChartData[]>([]);
+  const [disciplineData, setDisciplineData] = useState<DisciplineData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,12 +56,18 @@ export const AdminGymDashboard = () => {
       try {
         const token = localStorage.getItem(TOKEN_KEY);
 
-        // Fetch estadísticas del dashboard (incluye ingresos mensuales calculados)
-        const [statsRes, recentRes] = await Promise.all([
+        // Fetch estadísticas del dashboard, gráficas y asistencias
+        const [statsRes, recentRes, incomeChartRes, disciplineRes] = await Promise.all([
           axios.get(`${API_URL}/stats/dashboard`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
           axios.get(`${API_URL}/attendances?limit=5`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          axios.get(`${API_URL}/stats/monthly-income-chart`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          axios.get(`${API_URL}/stats/discipline-distribution`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -49,11 +79,14 @@ export const AdminGymDashboard = () => {
           activeMembers: stats.activeMembers,
           todayAttendances: stats.todayAttendances,
           monthlyRevenue: stats.monthlyRevenue,
-          expiringMemberships: stats.expiringMemberships,
         });
 
         // Últimas asistencias
         setRecentAttendances(recentRes.data.data || []);
+
+        // Datos de gráficas
+        setIncomeChartData(incomeChartRes.data.data || []);
+        setDisciplineData(disciplineRes.data.data || []);
 
       } catch (err: any) {
         setError(err.response?.data?.message || 'Error al cargar datos');
@@ -99,18 +132,21 @@ export const AdminGymDashboard = () => {
       color: 'bg-green-50 text-green-600',
     },
     {
+      title: 'Asistencias Hoy',
+      value: data?.todayAttendances || 0,
+      icon: '📅',
+      color: 'bg-purple-50 text-purple-600',
+    },
+    {
       title: 'Ingresos del Mes',
       value: `Bs ${data?.monthlyRevenue.toFixed(2) || '0.00'}`,
       icon: '💰',
       color: 'bg-yellow-50 text-yellow-600',
     },
-    {
-      title: 'Por Vencer (7 días)',
-      value: data?.expiringMemberships || 0,
-      icon: '⚠️',
-      color: 'bg-red-50 text-red-600',
-    },
   ];
+
+  // Colores para el pie chart
+  const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6', '#f97316'];
 
   return (
     <AdminGymLayout>
@@ -118,24 +154,92 @@ export const AdminGymDashboard = () => {
         <h1 className="text-2xl lg:text-3xl font-bold text-gray-800 mb-6 lg:mb-8">Dashboard</h1>
 
         {/* Métricas */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 lg:gap-6 mb-6 lg:mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-6 lg:mb-8">
           {metrics.map((metric, index) => (
             <Card key={index}>
-              <div className="flex items-start justify-between">
+              <div className="flex items-start justify-between gap-2">
                 <div className="flex-1 min-w-0">
                   <p className="text-xs lg:text-sm font-medium text-gray-500 mb-1">
                     {metric.title}
                   </p>
-                  <p className="text-2xl lg:text-3xl font-bold text-gray-800 truncate">
+                  <p className="text-lg lg:text-2xl font-bold text-gray-800 break-words">
                     {metric.value}
                   </p>
                 </div>
-                <div className={`p-2 lg:p-3 rounded-lg ${metric.color} flex-shrink-0`}>
+                <div className={`rounded-lg ${metric.color} p-2 lg:p-3 flex-shrink-0`}>
                   <span className="text-xl lg:text-2xl">{metric.icon}</span>
                 </div>
               </div>
             </Card>
           ))}
+        </div>
+
+        {/* Gráficas */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 mb-6 lg:mb-8">
+          {/* Gráfica de Ingresos del Mes */}
+          <Card>
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">Ingresos del Mes</h3>
+            {incomeChartData.length === 0 ? (
+              <p className="text-gray-500 text-center py-8">No hay datos de ingresos este mes</p>
+            ) : (
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={incomeChartData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis
+                    dataKey="day"
+                    style={{ fontSize: '12px' }}
+                  />
+                  <YAxis
+                    style={{ fontSize: '12px' }}
+                  />
+                  <Tooltip
+                    formatter={(value: any) => [`Bs ${Number(value).toFixed(2)}`, 'Ingresos']}
+                    contentStyle={{ fontSize: '14px' }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="income"
+                    stroke="#10b981"
+                    strokeWidth={2}
+                    dot={{ fill: '#10b981', r: 4 }}
+                    activeDot={{ r: 6 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            )}
+          </Card>
+
+          {/* Gráfica de Distribución por Disciplina */}
+          <Card>
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">Distribución por Disciplina</h3>
+            {disciplineData.length === 0 ? (
+              <p className="text-gray-500 text-center py-8">No hay miembros activos</p>
+            ) : (
+              <div className="flex flex-col lg:flex-row items-center gap-4">
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={disciplineData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={(entry: any) => `${entry.name} (${entry.percentage}%)`}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      {disciplineData.map((_, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      formatter={(value: any) => [`${value} miembros`, 'Cantidad']}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            )}
+          </Card>
         </div>
 
         {/* Últimas Asistencias */}

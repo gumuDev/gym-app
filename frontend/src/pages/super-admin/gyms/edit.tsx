@@ -6,6 +6,7 @@ import { Card } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
 import { TOKEN_KEY, API_URL } from '../../../constants/auth';
+import { showError, showSuccess } from '../../../utils/notification';
 import axios from 'axios';
 
 interface EditGymForm {
@@ -53,7 +54,7 @@ export const GymsEdit = () => {
           is_active: gym.is_active,
         });
       } catch (error: any) {
-        alert(error.response?.data?.message || 'Error al cargar gimnasio');
+        showError(error.response?.data?.message || 'Error al cargar gimnasio');
         push('/super-admin/gyms');
       } finally {
         setFetchLoading(false);
@@ -117,12 +118,12 @@ export const GymsEdit = () => {
         }
       );
 
-      alert('Gimnasio actualizado exitosamente');
+      showSuccess('Gimnasio actualizado exitosamente');
       push(`/super-admin/gyms/show/${id}`);
     } catch (error: any) {
       const errorMessage =
         error.response?.data?.message || 'Error al actualizar el gimnasio';
-      alert(errorMessage);
+      showError(errorMessage);
     } finally {
       setLoading(false);
     }

@@ -4,13 +4,18 @@ import { sendSuccess, sendError, sendNotFound, sendServerError } from '../utils/
 
 /**
  * GET /api/members
- * Listar members del gym
+ * Listar members del gym con paginación y filtros
+ * Query params: page, limit, search
  */
 export const getMembers = async (req: Request, res: Response): Promise<void> => {
   try {
     const gymId = req.gymId!;
-    const members = await memberService.getAllMembers(gymId);
-    sendSuccess(res, members);
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const search = req.query.search as string;
+
+    const result = await memberService.getAllMembers({ gymId, page, limit, search });
+    sendSuccess(res, result);
   } catch (error: any) {
     sendServerError(res, error.message);
   }

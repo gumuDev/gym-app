@@ -15,6 +15,18 @@ export const createAttendance = async (req: Request, res: Response): Promise<voi
 
     sendSuccess(res, result, 'Asistencia registrada exitosamente', 201);
   } catch (error: any) {
+    // Si es un error de asistencia duplicada, devolver 409 con info adicional
+    if (error.alreadyRegistered) {
+      res.status(409).json({
+        success: false,
+        error: error.message,
+        alreadyRegistered: true,
+        registeredAt: error.registeredAt,
+        member: error.member,
+      });
+      return;
+    }
+
     sendError(res, error.message);
   }
 };

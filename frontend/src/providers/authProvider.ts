@@ -2,7 +2,7 @@ import axios from 'axios';
 import { TOKEN_KEY, USER_KEY, API_URL } from '../constants/auth';
 
 export const authProvider = {
-  login: async ({ email, password, code, phone, type }) => {
+  login: async ({ email, password, code, phone, type }: any) => {
     try {
       let endpoint = '/auth/login';
       let payload: any = {};
@@ -16,11 +16,7 @@ export const authProvider = {
         payload = { email, password };
       }
 
-      console.log('🔐 Intentando login en:', `${API_URL}${endpoint}`);
-      console.log('📦 Payload:', payload);
-
       const { data } = await axios.post(`${API_URL}${endpoint}`, payload);
-
       console.log('✅ Respuesta del servidor:', data);
 
       // El backend devuelve { success, data: { token, user } }
@@ -70,7 +66,7 @@ export const authProvider = {
         success: false,
         error: {
           name: 'LoginError',
-          message: error?.response?.data?.message || 'Error al iniciar sesión',
+          message: error?.response?.data?.error || 'Error al iniciar sesión',
         },
       };
     }
@@ -132,7 +128,7 @@ export const authProvider = {
     return null;
   },
 
-  onError: async error => {
+  onError: async (error: any) => {
     if (error.response?.status === 401) {
       return {
         logout: true,

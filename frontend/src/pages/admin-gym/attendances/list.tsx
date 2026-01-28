@@ -4,6 +4,7 @@ import { AdminGymLayout } from '../../../components/layout/AdminGymLayout';
 import { Card } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
 import { TOKEN_KEY, API_URL } from '../../../constants/auth';
+import { showError } from '../../../utils/notification';
 import axios from 'axios';
 
 interface Member {
@@ -49,7 +50,7 @@ export const AttendancesList = () => {
       const data = response.data.data || [];
       setAttendances(data);
     } catch (error: any) {
-      alert('Error al cargar asistencias');
+      showError('Error al cargar asistencias');
     } finally {
       setLoading(false);
     }

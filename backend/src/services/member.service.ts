@@ -24,13 +24,43 @@ interface UpdateMemberData {
   telegram_chat_id?: string;
 }
 
+interface GetAllMembersParams {
+  gymId: string;
+  page?: number;
+  limit?: number;
+  search?: string;
+}
+
 /**
- * Listar members del gym
+ * Listar members del gym con paginación y filtros
  */
-export const getAllMembers = async (gymId: string) => {
-  return await prisma.member.findMany({
-    where: { gym_id: gymId },
+export const getAllMembers = async ({ gymId, page = 1, limit = 10, search }: GetAllMembersParams) => {
+  // Validar parámetros
+  const currentPage = Math.max(1, page);
+  const itemsPerPage = Math.min(Math.max(1, limit), 100); // Máximo 100
+  const skip = (currentPage - 1) * itemsPerPage;
+
+  // Construir filtro de búsqueda
+  const where: any = { gym_id: gymId };
+
+  if (search && search.trim()) {
+    where.OR = [
+      { name: { contains: search.trim(), mode: 'insensitive' } },
+      { email: { contains: search.trim(), mode: 'insensitive' } },
+      { phone: { contains: search.trim(), mode: 'insensitive' } },
+      { code: { contains: search.trim(), mode: 'insensitive' } },
+    ];
+  }
+
+  // Obtener total de registros
+  const total = await prisma.member.count({ where });
+
+  // Obtener members paginados
+  const members = await prisma.member.findMany({
+    where,
     orderBy: { created_at: 'desc' },
+    skip,
+    take: itemsPerPage,
     include: {
       memberships: {
         where: { status: 'ACTIVE' },
@@ -46,6 +76,23 @@ export const getAllMembers = async (gymId: string) => {
       },
     },
   });
+
+  // Calcular metadata de paginación
+  const totalPages = Math.ceil(total / itemsPerPage);
+  const hasMore = currentPage < totalPages;
+  const hasPrevious = currentPage > 1;
+
+  return {
+    data: members,
+    pagination: {
+      total,
+      page: currentPage,
+      limit: itemsPerPage,
+      totalPages,
+      hasMore,
+      hasPrevious,
+    },
+  };
 };
 
 /**

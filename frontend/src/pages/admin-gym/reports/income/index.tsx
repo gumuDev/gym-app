@@ -5,6 +5,7 @@ import { Card } from '../../../../components/ui/Card';
 import { DateRangePicker } from '../../../../components/reports/DateRangePicker';
 import { IncomeChart } from '../../../../components/reports/IncomeChart';
 import { TOKEN_KEY, API_URL } from '../../../../constants/auth';
+import { showError } from '../../../../utils/notification';
 import axios from 'axios';
 import { startOfMonth, endOfMonth, format } from 'date-fns';
 
@@ -64,7 +65,7 @@ export const IncomeReport = () => {
       setData(response.data.data);
     } catch (error: any) {
       console.error('Error cargando reporte:', error);
-      alert('Error al cargar el reporte');
+      showError('Error al cargar el reporte');
     } finally {
       setLoading(false);
     }

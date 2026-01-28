@@ -6,6 +6,7 @@ import { Card } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
 import { TOKEN_KEY, API_URL } from '../../../constants/auth';
+import { showError, showSuccess } from '../../../utils/notification';
 import axios from 'axios';
 
 interface PricingPlan {
@@ -44,7 +45,7 @@ export const PricingEdit = () => {
         const foundPlan = plans.find((p: PricingPlan) => p.id === id);
 
         if (!foundPlan) {
-          alert('Plan no encontrado');
+          showError('Plan no encontrado');
           push('/admin-gym/pricing');
           return;
         }
@@ -52,7 +53,7 @@ export const PricingEdit = () => {
         setPlan(foundPlan);
         setPrice(foundPlan.price.toString());
       } catch (err: any) {
-        alert(err.response?.data?.message || 'Error al cargar plan');
+        showError(err.response?.data?.message || 'Error al cargar plan');
         push('/admin-gym/pricing');
       } finally {
         setLoading(false);
@@ -60,7 +61,8 @@ export const PricingEdit = () => {
     };
 
     fetchPlan();
-  }, [id, push]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
 
   const validateForm = (): boolean => {
     const priceValue = parseFloat(price);
@@ -90,12 +92,12 @@ export const PricingEdit = () => {
         }
       );
 
-      alert('Plan actualizado exitosamente');
+      showSuccess('Plan actualizado exitosamente');
       push('/admin-gym/pricing');
     } catch (error: any) {
       const errorMessage =
         error.response?.data?.message || 'Error al actualizar el plan';
-      alert(errorMessage);
+      showError(errorMessage);
     } finally {
       setSaving(false);
     }

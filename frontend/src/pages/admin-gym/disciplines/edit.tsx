@@ -6,6 +6,7 @@ import { Card } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
 import { TOKEN_KEY, API_URL } from '../../../constants/auth';
+import { showError, showSuccess } from '../../../utils/notification';
 import axios from 'axios';
 
 interface EditDisciplineForm {
@@ -40,7 +41,7 @@ export const DisciplinesEdit = () => {
         const discipline = disciplines.find((d: any) => d.id === id);
 
         if (!discipline) {
-          alert('Disciplina no encontrada');
+          showError('Disciplina no encontrada');
           push('/admin-gym/disciplines');
           return;
         }
@@ -50,7 +51,7 @@ export const DisciplinesEdit = () => {
           description: discipline.description || '',
         });
       } catch (err: any) {
-        alert(err.response?.data?.message || 'Error al cargar disciplina');
+        showError(err.response?.data?.message || 'Error al cargar disciplina');
         push('/admin-gym/disciplines');
       } finally {
         setLoading(false);
@@ -58,7 +59,8 @@ export const DisciplinesEdit = () => {
     };
 
     fetchDiscipline();
-  }, [id, push]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
 
   const handleChange = (field: keyof EditDisciplineForm, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -109,12 +111,12 @@ export const DisciplinesEdit = () => {
         }
       );
 
-      alert('Disciplina actualizada exitosamente');
+      showSuccess('Disciplina actualizada exitosamente');
       push('/admin-gym/disciplines');
     } catch (error: any) {
       const errorMessage =
         error.response?.data?.message || 'Error al actualizar la disciplina';
-      alert(errorMessage);
+      showError(errorMessage);
     } finally {
       setSaving(false);
     }

@@ -44,4 +44,4 @@ axiosInstance.interceptors.response.use(
 );
 
 // Crear el data provider de Refine
-export const dataProvider = dataProviderSimpleRest(API_URL, axiosInstance);
+export const dataProvider = dataProviderSimpleRest(API_URL, axiosInstance as any);

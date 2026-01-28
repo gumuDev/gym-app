@@ -5,6 +5,7 @@ import { Card } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
 import { TOKEN_KEY, API_URL } from '../../../constants/auth';
+import { showError, showSuccess } from '../../../utils/notification';
 import axios from 'axios';
 
 interface CreateGymForm {
@@ -101,12 +102,12 @@ export const GymsCreate = () => {
         }
       );
 
-      alert('Gimnasio creado exitosamente');
+      showSuccess('Gimnasio creado exitosamente');
       push('/super-admin/gyms');
     } catch (error: any) {
       const errorMessage =
         error.response?.data?.message || 'Error al crear el gimnasio';
-      alert(errorMessage);
+      showError(errorMessage);
     } finally {
       setLoading(false);
     }

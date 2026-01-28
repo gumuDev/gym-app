@@ -3,7 +3,9 @@ import { useNavigation } from '@refinedev/core';
 import { AdminGymLayout } from '../../../components/layout/AdminGymLayout';
 import { Card } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
+import { Input } from '../../../components/ui/Input';
 import { TOKEN_KEY, API_URL } from '../../../constants/auth';
+import { showError } from '../../../utils/notification';
 import axios from 'axios';
 
 interface Member {
@@ -39,6 +41,7 @@ export const MembershipsList = () => {
   const [filteredMemberships, setFilteredMemberships] = useState<Membership[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState<FilterStatus>('all');
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     fetchMemberships();
@@ -48,7 +51,7 @@ export const MembershipsList = () => {
   useEffect(() => {
     applyFilter();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterStatus, memberships]);
+  }, [filterStatus, memberships, searchTerm]);
 
   const fetchMemberships = async () => {
     try {
@@ -60,7 +63,7 @@ export const MembershipsList = () => {
       const data = response.data.data || [];
       setMemberships(data);
     } catch (error: any) {
-      alert('Error al cargar membresías');
+      showError('Error al cargar membresías');
     } finally {
       setLoading(false);
     }
@@ -69,24 +72,32 @@ export const MembershipsList = () => {
   const applyFilter = () => {
     let filtered = [...memberships];
 
-    if (filterStatus === 'all') {
-      setFilteredMemberships(filtered);
-      return;
+    // Aplicar filtro de búsqueda
+    if (searchTerm.trim()) {
+      const search = searchTerm.toLowerCase();
+      filtered = filtered.filter((m) =>
+        m.member.name.toLowerCase().includes(search) ||
+        m.member.code.toLowerCase().includes(search) ||
+        (m.member.phone && m.member.phone.toLowerCase().includes(search))
+      );
     }
 
-    if (filterStatus === 'expiring') {
-      // Membresías que vencen en los próximos 7 días
-      const now = new Date();
-      const sevenDaysFromNow = new Date();
-      sevenDaysFromNow.setDate(now.getDate() + 7);
+    // Aplicar filtro de estado
+    if (filterStatus !== 'all') {
+      if (filterStatus === 'expiring') {
+        // Membresías que vencen en los próximos 7 días
+        const now = new Date();
+        const sevenDaysFromNow = new Date();
+        sevenDaysFromNow.setDate(now.getDate() + 7);
 
-      filtered = filtered.filter((m) => {
-        if (m.status !== 'ACTIVE') return false;
-        const endDate = new Date(m.end_date);
-        return endDate >= now && endDate <= sevenDaysFromNow;
-      });
-    } else {
-      filtered = filtered.filter((m) => m.status === filterStatus);
+        filtered = filtered.filter((m) => {
+          if (m.status !== 'ACTIVE') return false;
+          const endDate = new Date(m.end_date);
+          return endDate >= now && endDate <= sevenDaysFromNow;
+        });
+      } else {
+        filtered = filtered.filter((m) => m.status === filterStatus);
+      }
     }
 
     setFilteredMemberships(filtered);
@@ -156,8 +167,30 @@ export const MembershipsList = () => {
           </Button>
         </div>
 
+        {/* Barra de búsqueda */}
+        <div className="mt-6">
+          <div className="flex gap-2">
+            <div className="flex-1">
+              <Input
+                type="text"
+                placeholder="Buscar por nombre, código o teléfono del cliente..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            {searchTerm && (
+              <Button
+                variant="secondary"
+                onClick={() => setSearchTerm('')}
+              >
+                Limpiar
+              </Button>
+            )}
+          </div>
+        </div>
+
         {/* Filtros */}
-        <div className="mt-6 flex flex-wrap gap-2">
+        <div className="mt-4 flex flex-wrap gap-2">
           <button
             onClick={() => setFilterStatus('all')}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
@@ -288,32 +321,39 @@ export const MembershipsList = () => {
                           </td>
                           <td className="px-4 py-4">{getStatusBadge(membership.status)}</td>
                           <td className="px-4 py-4 text-right">
-                            <div className="flex items-center justify-end gap-2">
+                            <div className="flex items-center justify-end gap-1">
                               {membership.status === 'ACTIVE' && (
-                                <Button
-                                  size="sm"
-                                  variant="secondary"
+                                <button
                                   onClick={() =>
                                     push(`/admin-gym/memberships/renew/${membership.id}`)
                                   }
+                                  className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                                  title="Renovar"
                                 >
-                                  Renovar
-                                </Button>
+                                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                  </svg>
+                                </button>
                               )}
-                              <Button
-                                size="sm"
-                                variant="secondary"
+                              <button
                                 onClick={() => push(`/admin-gym/memberships/edit/${membership.id}`)}
+                                className="p-2 text-yellow-600 hover:bg-yellow-50 rounded-lg transition-colors"
+                                title="Editar"
                               >
-                                Editar
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="secondary"
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                              </button>
+                              <button
                                 onClick={() => push(`/admin-gym/members/show/${membership.member.id}`)}
+                                className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                title="Ver QR del Cliente"
                               >
-                                Ver
-                              </Button>
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                              </button>
                             </div>
                           </td>
                         </tr>

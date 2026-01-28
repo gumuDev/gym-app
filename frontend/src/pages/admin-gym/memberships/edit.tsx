@@ -5,6 +5,7 @@ import { AdminGymLayout } from '../../../components/layout/AdminGymLayout';
 import { Card } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
 import { TOKEN_KEY, API_URL } from '../../../constants/auth';
+import { showError } from '../../../utils/notification';
 import axios from 'axios';
 
 interface Member {
@@ -41,7 +42,7 @@ export const MembershipsEdit = () => {
   useEffect(() => {
     fetchMembership();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [id]);
 
   const fetchMembership = async () => {
     try {
@@ -55,14 +56,14 @@ export const MembershipsEdit = () => {
       const foundMembership = memberships.find((m: Membership) => m.id === id);
 
       if (!foundMembership) {
-        alert('Membresía no encontrada');
+        showError('Membresía no encontrada');
         push('/admin-gym/memberships');
         return;
       }
 
       setMembership(foundMembership);
     } catch (error: any) {
-      alert('Error al cargar la membresía');
+      showError('Error al cargar la membresía');
       push('/admin-gym/memberships');
     } finally {
       setLoadingData(false);
@@ -75,13 +76,13 @@ export const MembershipsEdit = () => {
     setLoading(true);
 
     try {
-      const token = localStorage.getItem(TOKEN_KEY);
+      // const token = localStorage.getItem(TOKEN_KEY);
 
       // Backend doesn't have a cancel endpoint yet
-      alert('Funcionalidad de cancelación en desarrollo. Contacta al administrador.');
+      showError('Funcionalidad de cancelación en desarrollo. Contacta al administrador.');
       setShowCancelConfirm(false);
     } catch (error: any) {
-      alert('Error al cancelar la membresía');
+      showError('Error al cancelar la membresía');
     } finally {
       setLoading(false);
     }

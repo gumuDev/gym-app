@@ -6,6 +6,7 @@ import { Card } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
 import { TOKEN_KEY, API_URL } from '../../../constants/auth';
+import { showError, showSuccess } from '../../../utils/notification';
 import axios from 'axios';
 
 interface EditMemberForm {
@@ -53,7 +54,7 @@ export const MembersEdit = () => {
           emergency_contact: member.emergency_contact || '',
         });
       } catch (err: any) {
-        alert(err.response?.data?.message || 'Error al cargar miembro');
+        showError(err.response?.data?.message || 'Error al cargar miembro');
         push('/admin-gym/members');
       } finally {
         setLoading(false);
@@ -61,7 +62,8 @@ export const MembersEdit = () => {
     };
 
     fetchMember();
-  }, [id, push]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
 
   const handleChange = (field: keyof EditMemberForm, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -124,12 +126,12 @@ export const MembersEdit = () => {
         }
       );
 
-      alert('Miembro actualizado exitosamente');
+      showSuccess('Miembro actualizado exitosamente');
       push('/admin-gym/members');
     } catch (error: any) {
       const errorMessage =
         error.response?.data?.message || 'Error al actualizar el miembro';
-      alert(errorMessage);
+      showError(errorMessage);
     } finally {
       setSaving(false);
     }

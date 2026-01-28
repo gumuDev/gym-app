@@ -5,6 +5,7 @@ import { Card } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
 import { TOKEN_KEY, API_URL } from '../../../constants/auth';
+import { showError, showSuccess } from '../../../utils/notification';
 import axios from 'axios';
 
 interface Gym {
@@ -57,6 +58,7 @@ export const Settings = () => {
       });
 
       const gymData = response.data.data;
+      console.log(gymData);
       setGym(gymData);
 
       // Set form data
@@ -71,7 +73,7 @@ export const Settings = () => {
       console.error('Error completo:', error);
       console.error('Error response:', error.response);
       const errorMessage = error.response?.data?.message || error.message || 'Error desconocido';
-      alert(`Error al cargar la configuración del gimnasio: ${errorMessage}`);
+      showError(`Error al cargar la configuración del gimnasio: ${errorMessage}`);
     } finally {
       setLoadingData(false);
     }
@@ -131,21 +133,13 @@ export const Settings = () => {
       const updatedGym = response.data.data;
       setGym(updatedGym);
 
-      setLoading(false);
-
-      // Usar setTimeout para mostrar alert después de actualizar el estado
-      setTimeout(() => {
-        alert('✅ Configuración actualizada exitosamente');
-      }, 100);
+      showSuccess('Configuración actualizada exitosamente');
     } catch (error: any) {
-      setLoading(false);
-
       const errorMessage =
         error.response?.data?.message || 'Error al actualizar la configuración';
-
-      setTimeout(() => {
-        alert(errorMessage);
-      }, 100);
+      showError(errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 

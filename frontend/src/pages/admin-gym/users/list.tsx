@@ -4,6 +4,7 @@ import { AdminGymLayout } from '../../../components/layout/AdminGymLayout';
 import { Card } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
 import { TOKEN_KEY, API_URL } from '../../../constants/auth';
+import { showError } from '../../../utils/notification';
 import axios from 'axios';
 
 interface User {
@@ -35,7 +36,7 @@ export const UsersList = () => {
       const data = response.data.data || [];
       setUsers(data);
     } catch (error: any) {
-      alert('Error al cargar usuarios');
+      showError('Error al cargar usuarios');
     } finally {
       setLoading(false);
     }
@@ -70,7 +71,7 @@ export const UsersList = () => {
       fetchUsers();
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || `Error al ${action} usuario`;
-      alert(errorMessage);
+      showError(errorMessage);
     }
   };
 

@@ -1,4 +1,6 @@
-import { ReactNode, useEffect, useState } from 'react';
+import type { ReactNode } from 'react';
+import { useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { TOKEN_KEY, USER_KEY } from '../../constants/auth';
 
@@ -22,7 +24,7 @@ export const ClientLayout = ({ children }: ClientLayoutProps) => {
   const handleLogout = () => {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
-    navigate('/login');
+    navigate('/client/login');
   };
 
   const isActive = (path: string) => location.pathname === path;

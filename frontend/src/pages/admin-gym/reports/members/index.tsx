@@ -5,6 +5,7 @@ import { Card } from '../../../../components/ui/Card';
 import { DateRangePicker } from '../../../../components/reports/DateRangePicker';
 import { MembersChart } from '../../../../components/reports/MembersChart';
 import { TOKEN_KEY, API_URL } from '../../../../constants/auth';
+import { showError } from '../../../../utils/notification';
 import axios from 'axios';
 import { startOfMonth, endOfMonth } from 'date-fns';
 
@@ -59,7 +60,7 @@ export const MembersReport = () => {
       setData(response.data.data);
     } catch (error: any) {
       console.error('Error cargando reporte:', error);
-      alert('Error al cargar el reporte');
+      showError('Error al cargar el reporte');
     } finally {
       setLoading(false);
     }

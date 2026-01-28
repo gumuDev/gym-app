@@ -1,6 +1,7 @@
 import { Refine } from '@refinedev/core';
 import { BrowserRouter, Routes, Route, Outlet, Navigate } from 'react-router-dom';
 import routerProvider from '@refinedev/react-router-v6';
+import { Toaster } from 'react-hot-toast';
 
 import { authProvider } from './providers/authProvider';
 import { dataProvider } from './providers/dataProvider';
@@ -53,6 +54,31 @@ import { ClientProfile } from './pages/client/profile';
 function App() {
   return (
     <BrowserRouter>
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: '#fff',
+            color: '#363636',
+            padding: '16px',
+            borderRadius: '8px',
+            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+          },
+          success: {
+            iconTheme: {
+              primary: '#10b981',
+              secondary: '#fff',
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: '#ef4444',
+              secondary: '#fff',
+            },
+          },
+        }}
+      />
       <Refine
         routerProvider={routerProvider}
         authProvider={authProvider}

@@ -5,6 +5,7 @@ import { Card } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
 import { TOKEN_KEY, API_URL } from '../../../constants/auth';
+import { showError, showSuccess } from '../../../utils/notification';
 import axios from 'axios';
 
 interface CreatePricingForm {
@@ -50,11 +51,11 @@ export const PricingCreate = () => {
         setDisciplines(activeDisciplines);
 
         if (activeDisciplines.length === 0) {
-          alert('No hay disciplinas activas. Por favor, crea una disciplina primero.');
+          showError('No hay disciplinas activas. Por favor, crea una disciplina primero.');
           push('/admin-gym/disciplines');
         }
       } catch (err: any) {
-        alert('Error al cargar disciplinas');
+        showError('Error al cargar disciplinas');
         push('/admin-gym/pricing');
       } finally {
         setLoadingDisciplines(false);
@@ -124,12 +125,12 @@ export const PricingCreate = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      alert('Plan de precios creado exitosamente');
+      showSuccess('Plan de precios creado exitosamente');
       push('/admin-gym/pricing');
     } catch (error: any) {
       const errorMessage =
         error.response?.data?.message || 'Error al crear el plan de precios';
-      alert(errorMessage);
+      showError(errorMessage);
     } finally {
       setLoading(false);
     }

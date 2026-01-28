@@ -3,6 +3,7 @@ import { SuperAdminLayout } from '../../../components/layout/SuperAdminLayout';
 import { Card } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
 import { TOKEN_KEY, API_URL } from '../../../constants/auth';
+import { showError, showSuccess } from '../../../utils/notification';
 import axios from 'axios';
 
 interface Gym {
@@ -36,9 +37,10 @@ export const GymsList = () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+      showSuccess(`Gimnasio ${!currentStatus ? 'activado' : 'desactivado'} correctamente`);
       tableQueryResult.refetch();
     } catch (error: any) {
-      alert(error.response?.data?.message || 'Error al actualizar gimnasio');
+      showError(error.response?.data?.message || 'Error al actualizar gimnasio');
     }
   };
 

@@ -5,13 +5,19 @@ import { Card } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
 import { TOKEN_KEY, API_URL } from '../../../constants/auth';
+import { showError, showSuccess } from '../../../utils/notification';
 import axios from 'axios';
 
 interface Member {
   id: string;
   code: string;
   name: string;
+  phone?: string;
   is_active: boolean;
+  activeMembership?: {
+    discipline: { name: string };
+    end_date: string;
+  };
 }
 
 interface Discipline {
@@ -54,6 +60,8 @@ export const MembershipsCreate = () => {
   const [currentStep, setCurrentStep] = useState<Step>('select-type');
   const [isNewMember, setIsNewMember] = useState<boolean | null>(null);
   const [members, setMembers] = useState<Member[]>([]);
+  const [filteredMembers, setFilteredMembers] = useState<Member[]>([]);
+  const [memberSearch, setMemberSearch] = useState('');
   const [disciplines, setDisciplines] = useState<Discipline[]>([]);
   const [pricingPlans, setPricingPlans] = useState<PricingPlan[]>([]);
   const [filteredPlans, setFilteredPlans] = useState<PricingPlan[]>([]);
@@ -80,6 +88,22 @@ export const MembershipsCreate = () => {
     fetchInitialData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    // Filtrar miembros según búsqueda
+    if (memberSearch.trim()) {
+      const search = memberSearch.toLowerCase();
+      const filtered = members.filter(
+        (m) =>
+          m.name.toLowerCase().includes(search) ||
+          m.code.toLowerCase().includes(search) ||
+          (m.phone && m.phone.toLowerCase().includes(search))
+      );
+      setFilteredMembers(filtered);
+    } else {
+      setFilteredMembers(members);
+    }
+  }, [memberSearch, members]);
 
   useEffect(() => {
     if (formData.discipline_id) {
@@ -118,8 +142,8 @@ export const MembershipsCreate = () => {
     try {
       const token = localStorage.getItem(TOKEN_KEY);
 
-      const [membersRes, disciplinesRes, pricingRes] = await Promise.all([
-        axios.get(`${API_URL}/members`, {
+      const [membersRes, disciplinesRes, pricingRes, membershipsRes] = await Promise.all([
+        axios.get(`${API_URL}/members?limit=1000`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
         axios.get(`${API_URL}/disciplines`, {
@@ -128,11 +152,31 @@ export const MembershipsCreate = () => {
         axios.get(`${API_URL}/pricing`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
+        axios.get(`${API_URL}/memberships?status=ACTIVE`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
       ]);
 
-      const allMembers = membersRes.data.data || [];
-      const activeMembers = allMembers.filter((m: Member) => m.is_active);
+      const allMembers = membersRes.data.data?.data || membersRes.data.data || [];
+      const activeMemberships = membershipsRes.data.data || [];
+
+      // Relacionar membresías activas con miembros
+      const membersWithMemberships = allMembers.map((m: Member) => {
+        const activeMembership = activeMemberships.find((ms: any) => ms.member.id === m.id);
+        return {
+          ...m,
+          activeMembership: activeMembership
+            ? {
+                discipline: activeMembership.discipline,
+                end_date: activeMembership.end_date,
+              }
+            : undefined,
+        };
+      });
+
+      const activeMembers = membersWithMemberships.filter((m: Member) => m.is_active);
       setMembers(activeMembers);
+      setFilteredMembers(activeMembers);
 
       const allDisciplines = disciplinesRes.data.data || [];
       const activeDisciplines = allDisciplines.filter((d: Discipline) => d.is_active);
@@ -142,18 +186,18 @@ export const MembershipsCreate = () => {
       setPricingPlans(plans);
 
       if (activeDisciplines.length === 0) {
-        alert('No hay disciplinas activas. Por favor, crea una disciplina primero.');
+        showError('No hay disciplinas activas. Por favor, crea una disciplina primero.');
         push('/admin-gym/disciplines');
         return;
       }
 
       if (plans.length === 0) {
-        alert('No hay planes de precios. Por favor, crea un plan primero.');
+        showError('No hay planes de precios. Por favor, crea un plan primero.');
         push('/admin-gym/pricing');
         return;
       }
     } catch (err: any) {
-      alert('Error al cargar datos');
+      showError('Error al cargar datos');
       push('/admin-gym/memberships');
     } finally {
       setLoadingData(false);
@@ -233,7 +277,7 @@ export const MembershipsCreate = () => {
       setCurrentStep('select-plan');
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || 'Error al crear el miembro';
-      alert(errorMessage);
+      showError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -299,12 +343,12 @@ export const MembershipsCreate = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      alert('Membresía creada exitosamente');
+      showSuccess('Membresía creada exitosamente');
       push('/admin-gym/memberships');
     } catch (error: any) {
       const errorMessage =
         error.response?.data?.message || 'Error al crear la membresía';
-      alert(errorMessage);
+      showError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -510,35 +554,67 @@ export const MembershipsCreate = () => {
               </div>
             ) : (
               <>
-                <div className="space-y-3 max-h-96 overflow-y-auto">
-                  {members.map((member) => (
-                    <button
-                      key={member.id}
-                      onClick={() => handleMemberSelection(member.id)}
-                      className="w-full p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all text-left"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-semibold text-gray-900">{member.name}</p>
-                          <p className="text-sm text-gray-500">{member.code}</p>
-                        </div>
-                        <svg
-                          className="w-6 h-6 text-gray-400"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 5l7 7-7 7"
-                          />
-                        </svg>
-                      </div>
-                    </button>
-                  ))}
+                {/* Buscador */}
+                <div className="mb-4">
+                  <Input
+                    type="text"
+                    placeholder="Buscar por nombre, código o teléfono..."
+                    value={memberSearch}
+                    onChange={(e) => setMemberSearch(e.target.value)}
+                  />
                 </div>
+
+                {filteredMembers.length === 0 ? (
+                  <div className="text-center py-8">
+                    <p className="text-gray-500 mb-4">No se encontraron clientes</p>
+                    <Button variant="secondary" onClick={() => setMemberSearch('')}>
+                      Limpiar búsqueda
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="space-y-3 max-h-96 overflow-y-auto">
+                    {filteredMembers.map((member) => (
+                      <button
+                        key={member.id}
+                        onClick={() => handleMemberSelection(member.id)}
+                        className="w-full p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all text-left"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <p className="font-semibold text-gray-900">{member.name}</p>
+                            <p className="text-sm text-gray-500">{member.code}</p>
+                            {member.phone && (
+                              <p className="text-xs text-gray-400 mt-1">📞 {member.phone}</p>
+                            )}
+                            {member.activeMembership && (
+                              <div className="mt-2">
+                                <span className="inline-flex items-center px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
+                                  ✓ Membresía Activa: {member.activeMembership.discipline.name}
+                                </span>
+                                <p className="text-xs text-gray-500 mt-1">
+                                  Vence: {new Date(member.activeMembership.end_date).toLocaleDateString('es-ES')}
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                          <svg
+                            className="w-6 h-6 text-gray-400 flex-shrink-0"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M9 5l7 7-7 7"
+                            />
+                          </svg>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
 
                 <div className="mt-6">
                   <Button

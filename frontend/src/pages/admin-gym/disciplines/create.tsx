@@ -5,6 +5,7 @@ import { Card } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
 import { TOKEN_KEY, API_URL } from '../../../constants/auth';
+import { showError, showSuccess } from '../../../utils/notification';
 import axios from 'axios';
 
 interface CreateDisciplineForm {
@@ -71,12 +72,12 @@ export const DisciplinesCreate = () => {
         }
       );
 
-      alert('Disciplina creada exitosamente');
+      showSuccess('Disciplina creada exitosamente');
       push('/admin-gym/disciplines');
     } catch (error: any) {
       const errorMessage =
         error.response?.data?.message || 'Error al crear la disciplina';
-      alert(errorMessage);
+      showError(errorMessage);
     } finally {
       setLoading(false);
     }

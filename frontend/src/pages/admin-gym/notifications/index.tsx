@@ -4,6 +4,7 @@ import { AdminGymLayout } from '../../../components/layout/AdminGymLayout';
 import { Card } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
 import { TOKEN_KEY, API_URL } from '../../../constants/auth';
+import { showError, showSuccess } from '../../../utils/notification';
 import axios from 'axios';
 
 interface Notification {
@@ -91,7 +92,7 @@ export const NotificationsList = () => {
       setPagination(result.pagination);
     } catch (error: any) {
       console.error('Error cargando notificaciones:', error);
-      alert('Error al cargar notificaciones');
+      showError('Error al cargar notificaciones');
     } finally {
       setLoading(false);
     }
@@ -113,13 +114,13 @@ export const NotificationsList = () => {
         }
       );
 
-      alert('✅ Verificación ejecutada. Revisa los logs del servidor.');
+      showSuccess('Verificación ejecutada. Revisa los logs del servidor.');
 
       // Recargar notificaciones desde la primera página
       await fetchNotifications(1);
     } catch (error: any) {
       console.error('Error ejecutando test:', error);
-      alert('Error al ejecutar verificación manual');
+      showError('Error al ejecutar verificación manual');
     } finally {
       setTestLoading(false);
     }

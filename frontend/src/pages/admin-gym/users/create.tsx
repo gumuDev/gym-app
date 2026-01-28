@@ -5,6 +5,7 @@ import { Card } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
 import { TOKEN_KEY, API_URL } from '../../../constants/auth';
+import { showError, showSuccess } from '../../../utils/notification';
 import axios from 'axios';
 
 interface FormData {
@@ -91,11 +92,11 @@ export const UsersCreate = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      alert('✅ Usuario creado exitosamente');
+      showSuccess('Usuario creado exitosamente');
       push('/admin-gym/users');
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || 'Error al crear usuario';
-      alert(errorMessage);
+      showError(errorMessage);
     } finally {
       setLoading(false);
     }

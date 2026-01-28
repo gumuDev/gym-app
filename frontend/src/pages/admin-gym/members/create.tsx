@@ -5,6 +5,7 @@ import { Card } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
 import { TOKEN_KEY, API_URL } from '../../../constants/auth';
+import { showError, showSuccess } from '../../../utils/notification';
 import axios from 'axios';
 
 interface CreateMemberForm {
@@ -93,12 +94,12 @@ export const MembersCreate = () => {
 
       const memberCode = response.data.data?.code || 'código generado';
 
-      alert(`Miembro creado exitosamente con código: ${memberCode}`);
+      showSuccess(`Miembro creado exitosamente con código: ${memberCode}`);
       push('/admin-gym/members');
     } catch (error: any) {
       const errorMessage =
-        error.response?.data?.message || 'Error al crear el miembro';
-      alert(errorMessage);
+        error.response?.data?.error || 'Error al crear el miembro';
+      showError(errorMessage);
     } finally {
       setLoading(false);
     }

@@ -35,6 +35,37 @@ export const createAttendance = async (gymId: string, memberCode: string, notes?
     throw new Error('El miembro no tiene membresía activa');
   }
 
+  // Verificar si ya registró asistencia hoy
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  const existingAttendance = await prisma.attendance.findFirst({
+    where: {
+      gym_id: gymId,
+      member_id: member.id,
+      checked_at: {
+        gte: today,
+        lt: tomorrow,
+      },
+    },
+  });
+
+  if (existingAttendance) {
+    // Ya existe una asistencia hoy
+    const error: any = new Error('Asistencia ya registrada hoy');
+    error.alreadyRegistered = true;
+    error.registeredAt = existingAttendance.checked_at;
+    error.member = {
+      id: member.id,
+      code: member.code,
+      name: member.name,
+      photo_url: member.photo_url,
+    };
+    throw error;
+  }
+
   // Verificar si la membresía está por vencer (menos de 7 días)
   const daysLeft = Math.ceil(
     (activeMembership.end_date.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)

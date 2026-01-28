@@ -1,4 +1,5 @@
-import { ReactNode, useState } from 'react';
+import type { ReactNode } from 'react';
+import { useState } from 'react';
 import { useLogout, useGetIdentity } from '@refinedev/core';
 import { Link, useLocation } from 'react-router-dom';
 
@@ -16,7 +17,7 @@ export const AdminGymLayout = ({ children }: AdminGymLayoutProps) => {
     { path: '/admin-gym/dashboard', label: 'Dashboard', icon: '📊' },
     { path: '/admin-gym/members', label: 'Miembros', icon: '👥' },
     { path: '/admin-gym/disciplines', label: 'Disciplinas', icon: '🥋' },
-    { path: '/admin-gym/pricing', label: 'Precios', icon: '💵' },
+    { path: '/admin-gym/pricing', label: 'Planes', icon: '💵' },
     { path: '/admin-gym/memberships', label: 'Membresías', icon: '🎫' },
     { path: '/admin-gym/attendances', label: 'Asistencias', icon: '✅' },
     { path: '/admin-gym/attendances/scanner', label: 'Escanear QR', icon: '📷' },

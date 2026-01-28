@@ -35,7 +35,7 @@ export const updateDiscipline = async (req: Request, res: Response): Promise<voi
   try {
     const gymId = req.gymId!;
     const { id } = req.params;
-    const discipline = await disciplineService.updateDiscipline(gymId, id, req.body);
+    const discipline = await disciplineService.updateDiscipline(gymId, id as string, req.body);
     sendSuccess(res, discipline, 'Disciplina actualizada exitosamente');
   } catch (error: any) {
     sendError(res, error.message);
@@ -49,7 +49,7 @@ export const deleteDiscipline = async (req: Request, res: Response): Promise<voi
   try {
     const gymId = req.gymId!;
     const { id } = req.params;
-    const discipline = await disciplineService.deleteDiscipline(gymId, id);
+    const discipline = await disciplineService.deleteDiscipline(gymId, id as string);
     sendSuccess(res, discipline, 'Disciplina desactivada exitosamente');
   } catch (error: any) {
     sendError(res, error.message);

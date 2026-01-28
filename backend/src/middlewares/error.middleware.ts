@@ -7,10 +7,9 @@ import { sendServerError } from '../utils/responseHelpers';
  */
 export const errorMiddleware = (
   error: Error,
-  req: Request,
+  _req: Request,
   res: Response,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  next: NextFunction
+  _next: NextFunction
 ): void => {
   console.error('❌ Error:', error);
 

@@ -76,5 +76,5 @@ export const validateNotificationQuery = (
   }
 
   (req as any).validatedFilters = filters;
-  next();
+  return next();
 };

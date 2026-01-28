@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import * as gymService from '../services/gym.service';
-import { sendSuccess, sendError, sendServerError } from '../utils/responseHelpers';
+import { sendSuccess, sendServerError } from '../utils/responseHelpers';
 
 /**
  * GET /api/gyms/me

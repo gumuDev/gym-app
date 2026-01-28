@@ -70,7 +70,7 @@ export const getAttendancesByMember = async (req: Request, res: Response): Promi
     const gymId = req.gymId!;
     const { memberId } = req.params;
 
-    const attendances = await attendanceService.getAttendancesByMember(gymId, memberId);
+    const attendances = await attendanceService.getAttendancesByMember(gymId, memberId as string);
     sendSuccess(res, attendances);
   } catch (error: any) {
     sendServerError(res, error.message);

@@ -9,7 +9,7 @@ export const createUserSchema = z.object({
     password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
     name: z.string().min(3, 'El nombre debe tener al menos 3 caracteres'),
     role: z.enum(['receptionist', 'trainer'], {
-      errorMap: () => ({ message: 'El rol debe ser receptionist o trainer' }),
+      message: 'El rol debe ser receptionist o trainer',
     }),
   }),
 });

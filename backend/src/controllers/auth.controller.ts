@@ -54,9 +54,9 @@ export const refresh = async (req: Request, res: Response): Promise<void> => {
  * POST /api/auth/forgot-password
  * Solicitar reset de password
  */
-export const forgotPassword = async (req: Request, res: Response): Promise<void> => {
+export const forgotPassword = async (_req: Request, res: Response): Promise<void> => {
   try {
-    const { email } = req.body;
+    // const { email } = req.body;
 
     // TODO: Implementar envío de email con token
     sendSuccess(res, null, 'Email de recuperación enviado (pendiente implementar)');
@@ -69,9 +69,9 @@ export const forgotPassword = async (req: Request, res: Response): Promise<void>
  * POST /api/auth/reset-password
  * Resetear password con token
  */
-export const resetPassword = async (req: Request, res: Response): Promise<void> => {
+export const resetPassword = async (_req: Request, res: Response): Promise<void> => {
   try {
-    const { token, newPassword } = req.body;
+    // const { token, newPassword } = req.body;
 
     // TODO: Implementar reset de password
     sendSuccess(res, null, 'Password actualizado (pendiente implementar)');

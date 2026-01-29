@@ -42,30 +42,32 @@ model SaasConfig {
 // Gimnasio (tenant)
 // ============================================
 model Gym {
-  id                String    @id @default(uuid())
-  name              String
-  slug              String    @unique // Para URL: /olimpo/admin
-  email             String
-  phone             String?
-  address           String?
-  logo_url          String?
-  is_active         Boolean   @default(true)
-  setup_completed   Boolean   @default(false)
-  trial_ends_at     DateTime?
-  subscription_ends DateTime?
-  telegram_bot_token String?
-  created_at        DateTime  @default(now())
-  updated_at        DateTime  @updatedAt
+  id                    String    @id @default(uuid())
+  name                  String
+  slug                  String    @unique // Para URL: /olimpo/admin
+  email                 String
+  phone                 String?
+  address               String?
+  logo_url              String?
+  is_active             Boolean   @default(true)
+  setup_completed       Boolean   @default(false)
+  trial_ends_at         DateTime?
+  subscription_ends     DateTime?
+  telegram_bot_token    String?
+  telegram_bot_username String?
+  created_at            DateTime  @default(now())
+  updated_at            DateTime  @updatedAt
 
   // Relaciones
-  users        User[]
-  members      Member[]
-  disciplines  Discipline[]
-  pricing_plans PricingPlan[]
-  memberships  Membership[]
-  attendances  Attendance[]
-  notifications NotificationLog[]
-  invoices     GymInvoice[]
+  users             User[]
+  members           Member[]
+  disciplines       Discipline[]
+  pricing_plans     PricingPlan[]
+  memberships       Membership[]
+  membershipMembers MembershipMember[]
+  attendances       Attendance[]
+  notifications     NotificationLog[]
+  invoices          GymInvoice[]
 
   @@map("gyms")
 }
@@ -117,10 +119,11 @@ model Member {
   updated_at        DateTime  @updatedAt
 
   // Relaciones
-  gym          Gym               @relation(fields: [gym_id], references: [id], onDelete: Cascade)
-  memberships  Membership[]
-  attendances  Attendance[]
-  notifications NotificationLog[]
+  gym               Gym                @relation(fields: [gym_id], references: [id], onDelete: Cascade)
+  memberships       Membership[]
+  membershipMembers MembershipMember[]
+  attendances       Attendance[]
+  notifications     NotificationLog[]
 
   @@unique([gym_id, phone])
   @@map("members")
@@ -161,8 +164,9 @@ model PricingPlan {
   updated_at    DateTime @updatedAt
 
   // Relaciones
-  gym        Gym        @relation(fields: [gym_id], references: [id], onDelete: Cascade)
-  discipline Discipline @relation(fields: [discipline_id], references: [id], onDelete: Cascade)
+  gym         Gym          @relation(fields: [gym_id], references: [id], onDelete: Cascade)
+  discipline  Discipline   @relation(fields: [discipline_id], references: [id], onDelete: Cascade)
+  memberships Membership[]
 
   @@unique([gym_id, discipline_id, num_people, num_months])
   @@map("pricing_plans")
@@ -178,25 +182,55 @@ enum MembershipStatus {
 }
 
 model Membership {
-  id            String           @id @default(uuid())
+  id              String           @id @default(uuid())
+  gym_id          String
+  member_id       String?          // Nullable para membresías grupales
+  discipline_id   String
+  pricing_plan_id String?
+  status          MembershipStatus @default(ACTIVE)
+  start_date      DateTime
+  end_date        DateTime
+  amount_paid     Float?           // Nullable para membresías grupales
+  total_amount    Float?           // Monto total de la membresía
+  payment_method  String?          // efectivo, transferencia, etc.
+  notes           String?
+  created_at      DateTime         @default(now())
+  updated_at      DateTime         @updatedAt
+
+  // Relaciones
+  gym               Gym                @relation(fields: [gym_id], references: [id], onDelete: Cascade)
+  member            Member?            @relation(fields: [member_id], references: [id], onDelete: Cascade)
+  discipline        Discipline         @relation(fields: [discipline_id], references: [id], onDelete: Cascade)
+  pricingPlan       PricingPlan?       @relation(fields: [pricing_plan_id], references: [id], onDelete: SetNull)
+  membershipMembers MembershipMember[]
+
+  @@index([pricing_plan_id])
+  @@map("memberships")
+}
+
+// ============================================
+// Membresía-Member (para membresías grupales)
+// ============================================
+model MembershipMember {
+  id            String   @id @default(uuid())
   gym_id        String
+  membership_id String
   member_id     String
-  discipline_id String
-  status        MembershipStatus @default(ACTIVE)
-  start_date    DateTime
-  end_date      DateTime
-  amount_paid   Float
-  payment_method String? // efectivo, transferencia, etc.
-  notes         String?
-  created_at    DateTime         @default(now())
-  updated_at    DateTime         @updatedAt
+  price_applied Float
+  is_primary    Boolean  @default(false)
+  created_at    DateTime @default(now())
 
   // Relaciones
   gym        Gym        @relation(fields: [gym_id], references: [id], onDelete: Cascade)
+  membership Membership @relation(fields: [membership_id], references: [id], onDelete: Cascade)
   member     Member     @relation(fields: [member_id], references: [id], onDelete: Cascade)
-  discipline Discipline @relation(fields: [discipline_id], references: [id], onDelete: Cascade)
 
-  @@map("memberships")
+  @@unique([membership_id, member_id])
+  @@index([gym_id])
+  @@index([membership_id])
+  @@index([member_id])
+  @@index([is_primary])
+  @@map("membership_members")
 }
 
 // ============================================

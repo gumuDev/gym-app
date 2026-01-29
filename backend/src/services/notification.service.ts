@@ -262,7 +262,7 @@ export const checkExpiringMemberships = async (isTest: boolean): Promise<void> =
         endDate.setHours(0, 0, 0, 0);
         const diffTime = endDate.getTime() - today.getTime();
         const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
-        console.log(`   - ${m.member.name} (${m.discipline.name}): vence ${endDate.toLocaleDateString('es-ES')} (en ${diffDays} días)`);
+        console.log(`   - ${m.member?.name || 'N/A'} (${m.discipline.name}): vence ${endDate.toLocaleDateString('es-ES')} (en ${diffDays} días)`);
       });
 
       return;
@@ -270,6 +270,12 @@ export const checkExpiringMemberships = async (isTest: boolean): Promise<void> =
 
     // Procesar cada membresía y calcular días exactos restantes
     for (const membership of expiringMemberships) {
+      // Saltar membresías grupales sin member directo (deberían tener membershipMembers)
+      if (!membership.member) {
+        console.log(`⏭️ Membresía ${membership.id} es grupal, omitiendo...`);
+        continue;
+      }
+
       console.log(`\n--- Procesando membresía ${membership.id} ---`);
       console.log(`👤 Member: ${membership.member.name}`);
       console.log(`🏋️  Disciplina: ${membership.discipline.name}`);
@@ -311,7 +317,7 @@ export const checkExpiringMemberships = async (isTest: boolean): Promise<void> =
       const notificationType = notificationDays === 0 ? 'EXPIRED' : 'EXPIRING_SOON';
       const alreadySent = await prisma.notificationLog.findFirst({
         where: {
-          member_id: membership.member_id,
+          member_id: membership.member.id,
           type: notificationType,
           status: 'SENT',
           sent_at: {
@@ -329,7 +335,7 @@ export const checkExpiringMemberships = async (isTest: boolean): Promise<void> =
       // Enviar notificación
       console.log(`🚀 Procediendo a enviar notificación de ${notificationDays} días...`);
       await sendExpiringNotification(
-        membership.member_id,
+        membership.member.id,
         membership.id,
         notificationDays
       );

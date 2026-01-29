@@ -40,45 +40,29 @@ export const AttendancesScanner = () => {
   const [cameraError, setCameraError] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const startScanner = async () => {
-    try {
-      setCameraError('');
-      setError('');
-      setScanResult(null);
-
-      const html5QrCode = new Html5Qrcode('qr-reader');
-      scannerRef.current = html5QrCode;
-
-      await html5QrCode.start(
-        { facingMode: 'environment' },
-        {
-          fps: 10,
-          qrbox: { width: 250, height: 250 },
-        },
-        onScanSuccess,
-        onScanFailure
-      );
-
-      setScanning(true);
-    } catch (err: any) {
-      console.error('Error starting scanner:', err);
-      setCameraError(
-        'No se pudo acceder a la cámara. Verifica los permisos del navegador.'
-      );
-    }
+  const startScanner = () => {
+    // Set scanning to true first, then start scanner in useEffect
+    setCameraError('');
+    setError('');
+    setScanResult(null);
+    setScanning(true);
   };
 
   const stopScanner = async () => {
-    if (scannerRef.current && scanning) {
+    if (scannerRef.current) {
       try {
-        await scannerRef.current.stop();
+        // Check if scanner is running before stopping
+        const state = scannerRef.current.getState();
+        if (state === 2) { // 2 = SCANNING state
+          await scannerRef.current.stop();
+        }
         scannerRef.current.clear();
         scannerRef.current = null;
-        setScanning(false);
       } catch (err) {
         console.error('Error stopping scanner:', err);
       }
     }
+    setScanning(false);
   };
 
   const onScanSuccess = async (decodedText: string) => {
@@ -245,13 +229,64 @@ export const AttendancesScanner = () => {
     setScanResult(null);
   };
 
+  // Initialize scanner when scanning becomes true
+  useEffect(() => {
+    const initScanner = async () => {
+      if (scanning && !scannerRef.current) {
+        try {
+          // Wait a bit for DOM to be ready
+          await new Promise(resolve => setTimeout(resolve, 100));
+
+          const html5QrCode = new Html5Qrcode('qr-reader');
+          scannerRef.current = html5QrCode;
+
+          await html5QrCode.start(
+            { facingMode: 'environment' },
+            {
+              fps: 10,
+              qrbox: { width: 250, height: 250 },
+            },
+            onScanSuccess,
+            onScanFailure
+          );
+        } catch (err: any) {
+          console.error('Error starting scanner:', err);
+          setCameraError(
+            'No se pudo acceder a la cámara. Verifica los permisos del navegador.'
+          );
+          setScanning(false);
+        }
+      }
+    };
+
+    initScanner();
+  }, [scanning]);
+
+  // Cleanup on unmount or when navigating away
   useEffect(() => {
     return () => {
-      // Cleanup on unmount
-      stopScanner();
+      // Force stop scanner on unmount
+      if (scannerRef.current) {
+        try {
+          const state = scannerRef.current.getState();
+          if (state === 2) { // 2 = SCANNING state
+            scannerRef.current.stop().catch(() => {});
+          }
+          scannerRef.current.clear();
+          scannerRef.current = null;
+        } catch (err) {
+          console.error('Error cleaning up scanner:', err);
+        }
+      }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Stop scanner when changing modes
+  useEffect(() => {
+    if (scanMode === 'upload' && scannerRef.current) {
+      stopScanner();
+    }
+  }, [scanMode]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('es-ES', {
@@ -316,42 +351,58 @@ export const AttendancesScanner = () => {
         {/* Scanner Area - Camera Mode */}
         {scanMode === 'camera' && !scanResult && (
           <Card>
-            {/* Hidden container for qr-reader, always present in DOM */}
-            <div
-              id="qr-reader"
-              className={`mx-auto max-w-md rounded-lg overflow-hidden ${
-                scanning ? 'block' : 'hidden'
-              }`}
-            ></div>
-
-            {!scanning ? (
-              <div className="text-center py-12">
-                <div className="text-6xl mb-4">📷</div>
-                <h2 className="text-xl font-semibold text-gray-800 mb-2">
-                  Escanear Código QR
-                </h2>
-                <p className="text-gray-600 mb-6">
-                  Activa la cámara para escanear el código QR del cliente
-                </p>
-                {cameraError && (
-                  <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-                    <p className="text-sm text-red-800">{cameraError}</p>
-                  </div>
-                )}
-                <Button onClick={startScanner}>Activar Cámara</Button>
-              </div>
-            ) : (
-              <div className="text-center">
-                <h2 className="text-lg font-semibold text-gray-800 mb-4">
-                  Apunta la cámara al código QR
-                </h2>
-                <div className="mt-6">
-                  <Button variant="secondary" onClick={stopScanner}>
-                    Detener Escaneo
-                  </Button>
+            <div className="text-center">
+              {/* Initial state - before scanning */}
+              {!scanning && (
+                <div className="py-12">
+                  <div className="text-6xl mb-4">📷</div>
+                  <h2 className="text-xl font-semibold text-gray-800 mb-2">
+                    Escanear Código QR
+                  </h2>
+                  <p className="text-gray-600 mb-6">
+                    Activa la cámara para escanear el código QR del cliente
+                  </p>
+                  {cameraError && (
+                    <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                      <p className="text-sm text-red-800">{cameraError}</p>
+                    </div>
+                  )}
+                  <Button onClick={startScanner}>Activar Cámara</Button>
                 </div>
-              </div>
-            )}
+              )}
+
+              {/* Scanning state - header with stop button */}
+              {scanning && (
+                <div className="py-4">
+                  <div className="flex items-center justify-between mb-4 px-4">
+                    <h2 className="text-lg font-semibold text-gray-800">
+                      Apunta la cámara al código QR
+                    </h2>
+                    <Button
+                      variant="secondary"
+                      onClick={stopScanner}
+                      className="bg-red-600 hover:bg-red-700 text-white border-red-600"
+                    >
+                      ⏹ Detener
+                    </Button>
+                  </div>
+
+                  {/* QR Reader container - ALWAYS in DOM when camera mode is active */}
+                  <div id="qr-reader" className="mx-auto"></div>
+
+                  {/* Bottom stop button */}
+                  <div className="mt-6">
+                    <Button
+                      variant="secondary"
+                      onClick={stopScanner}
+                      className="bg-red-600 hover:bg-red-700 text-white border-red-600"
+                    >
+                      ⏹ Detener Cámara
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
           </Card>
         )}
 

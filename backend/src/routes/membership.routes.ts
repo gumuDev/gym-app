@@ -9,6 +9,9 @@ import {
   getMembershipByIdSchema,
   getMembershipsByMemberSchema,
   renewMembershipSchema,
+  createGroupMembershipSchema,
+  renewGroupMembershipSchema,
+  cancelMembershipSchema,
 } from '../validators/membership.validator';
 
 const router = Router();
@@ -18,6 +21,16 @@ router.use(authMiddleware);
 router.use(gymMiddleware);
 
 /**
+ * GET /api/memberships/stats
+ * NOTA: Esta ruta debe ir ANTES de /:id
+ */
+router.get(
+  '/stats',
+  roleMiddleware(['admin', 'receptionist']),
+  membershipController.getMembershipStats
+);
+
+/**
  * GET /api/memberships/expiring
  * NOTA: Esta ruta debe ir ANTES de /member/:memberId y /:id
  */
@@ -25,6 +38,17 @@ router.get(
   '/expiring',
   roleMiddleware(['admin', 'receptionist']),
   membershipController.getExpiringMemberships
+);
+
+/**
+ * GET /api/memberships/member/:memberId/active
+ * Obtener membresía activa de un miembro
+ */
+router.get(
+  '/member/:memberId/active',
+  roleMiddleware(['admin', 'receptionist', 'member']),
+  validateMiddleware(getMembershipsByMemberSchema),
+  membershipController.getActiveMembershipByMember
 );
 
 /**
@@ -71,6 +95,43 @@ router.post(
   roleMiddleware(['admin', 'receptionist']),
   validateMiddleware(renewMembershipSchema),
   membershipController.renewMembership
+);
+
+// ============================================
+// RUTAS PARA MEMBRESÍAS GRUPALES
+// ============================================
+
+/**
+ * POST /api/memberships/group
+ * Crear membresía grupal
+ */
+router.post(
+  '/group',
+  roleMiddleware(['admin', 'receptionist']),
+  validateMiddleware(createGroupMembershipSchema),
+  membershipController.createGroupMembership
+);
+
+/**
+ * POST /api/memberships/:id/renew-group
+ * Renovar membresía grupal
+ */
+router.post(
+  '/:id/renew-group',
+  roleMiddleware(['admin', 'receptionist']),
+  validateMiddleware(renewGroupMembershipSchema),
+  membershipController.renewGroupMembership
+);
+
+/**
+ * DELETE /api/memberships/:id/cancel
+ * Cancelar membresía
+ */
+router.delete(
+  '/:id/cancel',
+  roleMiddleware(['admin']),
+  validateMiddleware(cancelMembershipSchema),
+  membershipController.cancelMembership
 );
 
 export default router;

@@ -28,10 +28,17 @@ export const initBot = async (gymId: string, botToken: string): Promise<void> =>
 
     const bot = new Telegraf(botToken);
 
-    // Verificar que el token sea válido
+    // Verificar que el token sea válido y guardar username
     try {
       const botInfo = await bot.telegram.getMe();
       console.log(`✅ Token válido para bot: @${botInfo.username}`);
+
+      // Guardar el username del bot en la BD
+      await prisma.gym.update({
+        where: { id: gymId },
+        data: { telegram_bot_username: botInfo.username },
+      });
+      console.log(`✅ Username del bot guardado: @${botInfo.username}`);
     } catch (error: any) {
       console.error(`❌ Token inválido:`, error.message);
       throw new Error(`Token inválido o error de conexión: ${error.message}`);

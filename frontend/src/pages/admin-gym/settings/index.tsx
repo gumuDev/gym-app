@@ -17,6 +17,7 @@ interface Gym {
   address?: string;
   logo_url?: string;
   telegram_bot_token?: string;
+  telegram_bot_username?: string;
   setup_completed: boolean;
   created_at: string;
 }
@@ -128,16 +129,28 @@ export const Settings = () => {
 
       const response = await axios.patch(`${API_URL}/gyms/me`, payload, {
         headers: { Authorization: `Bearer ${token}` },
+        timeout: 15000, // 15 segundos timeout
       });
 
       const updatedGym = response.data.data;
       setGym(updatedGym);
 
-      showSuccess('Configuración actualizada exitosamente');
+      // Mensaje especial si se configuró Telegram
+      if (payload.telegram_bot_token) {
+        showSuccess('Configuración actualizada. El bot de Telegram se está inicializando en segundo plano...');
+      } else {
+        showSuccess('Configuración actualizada exitosamente');
+      }
     } catch (error: any) {
-      const errorMessage =
-        error.response?.data?.message || 'Error al actualizar la configuración';
-      showError(errorMessage);
+      console.error('Error actualizando configuración:', error);
+
+      if (error.code === 'ECONNABORTED') {
+        showError('La solicitud tardó demasiado. Intenta nuevamente.');
+      } else {
+        const errorMessage =
+          error.response?.data?.message || 'Error al actualizar la configuración';
+        showError(errorMessage);
+      }
     } finally {
       setLoading(false);
     }
@@ -349,9 +362,14 @@ export const Settings = () => {
                     <p className="text-sm font-medium text-green-800 mb-2">
                       ✅ Bot Configurado
                     </p>
+                    {gym?.telegram_bot_username && (
+                      <p className="text-sm text-green-700 mb-2">
+                        <span className="font-medium">Bot:</span> @{gym.telegram_bot_username}
+                      </p>
+                    )}
                     <p className="text-sm text-green-700">
                       El bot está listo para enviar notificaciones. Los clientes pueden
-                      activar las notificaciones hablando con tu bot.
+                      activar las notificaciones desde su perfil en la app.
                     </p>
                   </div>
                 )}

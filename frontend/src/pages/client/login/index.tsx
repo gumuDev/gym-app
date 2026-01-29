@@ -5,7 +5,7 @@ import { Input } from '../../../components/ui/Input';
 
 export const ClientLogin = () => {
   const { mutate: login, isLoading } = useLogin();
-  const [loginMethod, setLoginMethod] = useState<'code' | 'phone'>('code');
+  const [loginMethod, setLoginMethod] = useState<'code' | 'phone'>('phone');
   const [code, setCode] = useState('');
   const [phone, setPhone] = useState('');
   const [error, setError] = useState('');
@@ -13,7 +13,7 @@ export const ClientLogin = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-
+    
     if (loginMethod === 'code') {
       if (!code.trim()) {
         setError('Por favor ingresa tu código');
@@ -35,6 +35,9 @@ export const ClientLogin = () => {
       login(
         { phone: phone.trim(), type: 'member' },
         {
+          onSuccess: (data: any) => {
+            if (!data?.success) setError(data?.error.message || 'Fallo al ingresar');
+          },
           onError: (error: any) => {
             setError(error?.message || 'Teléfono no encontrado');
           },
@@ -59,29 +62,27 @@ export const ClientLogin = () => {
           <div className="flex mb-6 bg-gray-100 rounded-lg p-1">
             <button
               onClick={() => {
-                setLoginMethod('code');
-                setError('');
-              }}
-              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-                loginMethod === 'code'
-                  ? 'bg-white text-green-600 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              Con Código
-            </button>
-            <button
-              onClick={() => {
                 setLoginMethod('phone');
                 setError('');
               }}
-              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-                loginMethod === 'phone'
+              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${loginMethod === 'phone'
                   ? 'bg-white text-green-600 shadow-sm'
                   : 'text-gray-600 hover:text-gray-900'
-              }`}
+                }`}
             >
               Con Teléfono
+            </button>
+            <button
+              onClick={() => {
+                setLoginMethod('code');
+                setError('');
+              }}
+              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${loginMethod === 'code'
+                  ? 'bg-white text-green-600 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+                }`}
+            >
+              Con Código
             </button>
           </div>
 

@@ -20,14 +20,32 @@ interface Discipline {
   name: string;
 }
 
+interface MembershipMember {
+  id: string;
+  member_id: string;
+  price_applied: number;
+  is_primary: boolean;
+  member: Member;
+}
+
+interface PricingPlan {
+  id: string;
+  num_people: number;
+  num_months: number;
+  price: number;
+}
+
 interface Membership {
   id: string;
-  member: Member;
+  member?: Member; // Opcional para compatibilidad con membresías antiguas
+  membershipMembers?: MembershipMember[]; // Nuevo para membresías grupales
   discipline: Discipline;
+  pricingPlan?: PricingPlan;
   status: 'ACTIVE' | 'EXPIRED' | 'CANCELLED';
   start_date: string;
   end_date: string;
-  amount_paid: number;
+  amount_paid?: number;
+  total_amount?: number;
   payment_method?: string;
   notes?: string;
   created_at: string;
@@ -75,11 +93,25 @@ export const MembershipsList = () => {
     // Aplicar filtro de búsqueda
     if (searchTerm.trim()) {
       const search = searchTerm.toLowerCase();
-      filtered = filtered.filter((m) =>
-        m.member.name.toLowerCase().includes(search) ||
-        m.member.code.toLowerCase().includes(search) ||
-        (m.member.phone && m.member.phone.toLowerCase().includes(search))
-      );
+      filtered = filtered.filter((m) => {
+        // Para membresías grupales, buscar en membershipMembers
+        if (m.membershipMembers && m.membershipMembers.length > 0) {
+          return m.membershipMembers.some((mm) =>
+            mm.member.name.toLowerCase().includes(search) ||
+            mm.member.code.toLowerCase().includes(search) ||
+            (mm.member.phone && mm.member.phone.toLowerCase().includes(search))
+          );
+        }
+        // Para membresías antiguas, buscar en member
+        if (m.member) {
+          return (
+            m.member.name.toLowerCase().includes(search) ||
+            m.member.code.toLowerCase().includes(search) ||
+            (m.member.phone && m.member.phone.toLowerCase().includes(search))
+          );
+        }
+        return false;
+      });
     }
 
     // Aplicar filtro de estado
@@ -117,9 +149,8 @@ export const MembershipsList = () => {
 
     return (
       <span
-        className={`px-2 py-1 text-xs font-semibold rounded-full ${
-          badges[status as keyof typeof badges]
-        }`}
+        className={`px-2 py-1 text-xs font-semibold rounded-full ${badges[status as keyof typeof badges]
+          }`}
       >
         {labels[status as keyof typeof labels]}
       </span>
@@ -162,9 +193,14 @@ export const MembershipsList = () => {
               Gestiona las membresías de tus clientes
             </p>
           </div>
-          <Button onClick={() => push('/admin-gym/memberships/create')}>
-            + Nueva Membresía
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={() => push('/admin-gym/memberships/create')}>
+              + Nueva Individual
+            </Button>
+            <Button onClick={() => push('/admin-gym/memberships/create-group')} variant="secondary">
+              👥 Nueva Grupal
+            </Button>
+          </div>
         </div>
 
         {/* Barra de búsqueda */}
@@ -193,41 +229,37 @@ export const MembershipsList = () => {
         <div className="mt-4 flex flex-wrap gap-2">
           <button
             onClick={() => setFilterStatus('all')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              filterStatus === 'all'
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filterStatus === 'all'
                 ? 'bg-blue-600 text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
+              }`}
           >
             Todas ({memberships.length})
           </button>
           <button
             onClick={() => setFilterStatus('ACTIVE')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              filterStatus === 'ACTIVE'
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filterStatus === 'ACTIVE'
                 ? 'bg-green-600 text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
+              }`}
           >
             Activas ({memberships.filter((m) => m.status === 'ACTIVE').length})
           </button>
           <button
             onClick={() => setFilterStatus('expiring')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              filterStatus === 'expiring'
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filterStatus === 'expiring'
                 ? 'bg-yellow-600 text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
+              }`}
           >
             Por Vencer
           </button>
           <button
             onClick={() => setFilterStatus('EXPIRED')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              filterStatus === 'EXPIRED'
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filterStatus === 'EXPIRED'
                 ? 'bg-red-600 text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
+              }`}
           >
             Vencidas ({memberships.filter((m) => m.status === 'EXPIRED').length})
           </button>
@@ -280,14 +312,39 @@ export const MembershipsList = () => {
                       const daysRemaining = getDaysRemaining(membership.end_date);
                       const isExpiringSoon = membership.status === 'ACTIVE' && daysRemaining <= 7;
 
+                      // Determinar si es membresía grupal
+                      const isGroup = membership.membershipMembers && membership.membershipMembers.length > 0;
+                      const memberCount = isGroup ? membership.membershipMembers?.length ?? 1 : 1;
+
+                      // Obtener nombre(s) para mostrar
+                      let memberDisplay = '';
+                      if (isGroup) {
+                        const names = membership.membershipMembers?.map(mm => mm.member.name) ?? [];
+                        memberDisplay = names.length > 2
+                          ? `${names.slice(0, 2).join(', ')} +${names.length - 2}`
+                          : names.join(', ');
+                      } else if (membership.member) {
+                        memberDisplay = membership.member.name;
+                      }
+
                       return (
                         <tr key={membership.id} className="hover:bg-gray-50">
                           <td className="px-4 py-4">
                             <div>
                               <p className="text-sm font-medium text-gray-900">
-                                {membership.member.name}
+                                {isGroup && (
+                                  <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800 mr-2">
+                                    👥 {memberCount}
+                                  </span>
+                                )}
+                                {memberDisplay}
                               </p>
-                              <p className="text-xs text-gray-500">{membership.member.code}</p>
+                              {isGroup && membership.membershipMembers?.[0] && (
+                                <p className="text-xs text-gray-500">{membership.membershipMembers[0].member.code}</p>
+                              )}
+                              {!isGroup && membership.member && (
+                                <p className="text-xs text-gray-500">{membership.member.code}</p>
+                              )}
                             </div>
                           </td>
                           <td className="px-4 py-4">
@@ -316,7 +373,7 @@ export const MembershipsList = () => {
                           </td>
                           <td className="px-4 py-4">
                             <span className="text-sm font-medium text-gray-900">
-                              Bs {membership.amount_paid.toFixed(2)}
+                              Bs {(membership.total_amount || membership.amount_paid || 0).toFixed(2)}
                             </span>
                           </td>
                           <td className="px-4 py-4">{getStatusBadge(membership.status)}</td>
@@ -345,7 +402,7 @@ export const MembershipsList = () => {
                                 </svg>
                               </button>
                               <button
-                                onClick={() => push(`/admin-gym/members/show/${membership.member.id}`)}
+                                onClick={() => push(`/admin-gym/members/show/${membership.member?.id}`)}
                                 className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                                 title="Ver QR del Cliente"
                               >
@@ -371,14 +428,37 @@ export const MembershipsList = () => {
               const daysRemaining = getDaysRemaining(membership.end_date);
               const isExpiringSoon = membership.status === 'ACTIVE' && daysRemaining <= 7;
 
+              // Determinar si es membresía grupal
+              const isGroup = membership.membershipMembers && membership.membershipMembers.length > 0;
+              const memberCount = isGroup ? membership.membershipMembers?.length ?? 1 : 1;
+
+              // Obtener nombre(s) para mostrar
+              let memberDisplay = '';
+              let memberCode = '';
+              if (isGroup) {
+                const names = membership.membershipMembers?.map(mm => mm.member.name) ?? [];
+                memberDisplay = names.length > 2
+                  ? `${names.slice(0, 2).join(', ')} +${names.length - 2}`
+                  : names.join(', ');
+                memberCode = membership.membershipMembers?.[0]?.member.code || '';
+              } else if (membership.member) {
+                memberDisplay = membership.member.name;
+                memberCode = membership.member.code;
+              }
+
               return (
                 <Card key={membership.id}>
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex-1">
                       <h3 className="font-semibold text-gray-900">
-                        {membership.member.name}
+                        {isGroup && (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800 mr-2">
+                            👥 {memberCount}
+                          </span>
+                        )}
+                        {memberDisplay}
                       </h3>
-                      <p className="text-sm text-gray-500">{membership.member.code}</p>
+                      <p className="text-sm text-gray-500">{memberCode}</p>
                     </div>
                     {getStatusBadge(membership.status)}
                   </div>
@@ -410,7 +490,7 @@ export const MembershipsList = () => {
                     <div className="flex justify-between">
                       <span className="text-gray-500">Monto:</span>
                       <span className="font-medium text-gray-900">
-                        Bs {membership.amount_paid.toFixed(2)}
+                        Bs {(membership.total_amount || membership.amount_paid || 0).toFixed(2)}
                       </span>
                     </div>
                   </div>
@@ -439,7 +519,7 @@ export const MembershipsList = () => {
                     <Button
                       size="sm"
                       variant="secondary"
-                      onClick={() => push(`/admin-gym/members/show/${membership.member.id}`)}
+                      onClick={() => push(`/admin-gym/members/show/${membership.member?.id}`)}
                     >
                       Ver Cliente
                     </Button>

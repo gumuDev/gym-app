@@ -30,6 +30,7 @@ import { PricingCreate } from './pages/admin-gym/pricing/create';
 import { PricingEdit } from './pages/admin-gym/pricing/edit';
 import { MembershipsList } from './pages/admin-gym/memberships/list';
 import { MembershipsCreate } from './pages/admin-gym/memberships/create';
+import { MembershipsCreateGroup } from './pages/admin-gym/memberships/create-group';
 import { MembershipsEdit } from './pages/admin-gym/memberships/edit';
 import { MembershipsRenew } from './pages/admin-gym/memberships/renew';
 import { AttendancesList } from './pages/admin-gym/attendances/list';
@@ -192,6 +193,7 @@ function App() {
             <Route path="pricing/edit/:id" element={<PricingEdit />} />
             <Route path="memberships" element={<MembershipsList />} />
             <Route path="memberships/create" element={<MembershipsCreate />} />
+            <Route path="memberships/create-group" element={<MembershipsCreateGroup />} />
             <Route path="memberships/edit/:id" element={<MembershipsEdit />} />
             <Route path="memberships/renew/:id" element={<MembershipsRenew />} />
             <Route path="attendances" element={<AttendancesList />} />

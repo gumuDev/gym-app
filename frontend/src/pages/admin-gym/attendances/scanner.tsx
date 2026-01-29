@@ -40,32 +40,12 @@ export const AttendancesScanner = () => {
   const [cameraError, setCameraError] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const startScanner = async () => {
-    try {
-      setCameraError('');
-      setError('');
-      setScanResult(null);
-
-      const html5QrCode = new Html5Qrcode('qr-reader');
-      scannerRef.current = html5QrCode;
-
-      await html5QrCode.start(
-        { facingMode: 'environment' },
-        {
-          fps: 10,
-          qrbox: { width: 250, height: 250 },
-        },
-        onScanSuccess,
-        onScanFailure
-      );
-
-      setScanning(true);
-    } catch (err: any) {
-      console.error('Error starting scanner:', err);
-      setCameraError(
-        'No se pudo acceder a la cámara. Verifica los permisos del navegador.'
-      );
-    }
+  const startScanner = () => {
+    // Set scanning to true first, then start scanner in useEffect
+    setCameraError('');
+    setError('');
+    setScanResult(null);
+    setScanning(true);
   };
 
   const stopScanner = async () => {
@@ -245,6 +225,39 @@ export const AttendancesScanner = () => {
     setScanResult(null);
   };
 
+  // Initialize scanner when scanning becomes true
+  useEffect(() => {
+    const initScanner = async () => {
+      if (scanning && !scannerRef.current) {
+        try {
+          // Wait a bit for DOM to be ready
+          await new Promise(resolve => setTimeout(resolve, 100));
+
+          const html5QrCode = new Html5Qrcode('qr-reader');
+          scannerRef.current = html5QrCode;
+
+          await html5QrCode.start(
+            { facingMode: 'environment' },
+            {
+              fps: 10,
+              qrbox: { width: 250, height: 250 },
+            },
+            onScanSuccess,
+            onScanFailure
+          );
+        } catch (err: any) {
+          console.error('Error starting scanner:', err);
+          setCameraError(
+            'No se pudo acceder a la cámara. Verifica los permisos del navegador.'
+          );
+          setScanning(false);
+        }
+      }
+    };
+
+    initScanner();
+  }, [scanning]);
+
   useEffect(() => {
     return () => {
       // Cleanup on unmount
@@ -316,42 +329,41 @@ export const AttendancesScanner = () => {
         {/* Scanner Area - Camera Mode */}
         {scanMode === 'camera' && !scanResult && (
           <Card>
-            {/* Hidden container for qr-reader, always present in DOM */}
-            <div
-              id="qr-reader"
-              className={`mx-auto max-w-md rounded-lg overflow-hidden ${
-                scanning ? 'block' : 'hidden'
-              }`}
-            ></div>
+            {/* QR Reader container - ALWAYS in DOM when camera mode is active */}
+            <div id="qr-reader" style={{ display: scanning ? 'block' : 'none' }}></div>
 
-            {!scanning ? (
-              <div className="text-center py-12">
-                <div className="text-6xl mb-4">📷</div>
-                <h2 className="text-xl font-semibold text-gray-800 mb-2">
-                  Escanear Código QR
-                </h2>
-                <p className="text-gray-600 mb-6">
-                  Activa la cámara para escanear el código QR del cliente
-                </p>
-                {cameraError && (
-                  <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-                    <p className="text-sm text-red-800">{cameraError}</p>
-                  </div>
-                )}
-                <Button onClick={startScanner}>Activar Cámara</Button>
-              </div>
-            ) : (
-              <div className="text-center">
-                <h2 className="text-lg font-semibold text-gray-800 mb-4">
-                  Apunta la cámara al código QR
-                </h2>
-                <div className="mt-6">
+            <div className="text-center">
+              {/* Initial state - before scanning */}
+              {!scanning && (
+                <div className="py-12">
+                  <div className="text-6xl mb-4">📷</div>
+                  <h2 className="text-xl font-semibold text-gray-800 mb-2">
+                    Escanear Código QR
+                  </h2>
+                  <p className="text-gray-600 mb-6">
+                    Activa la cámara para escanear el código QR del cliente
+                  </p>
+                  {cameraError && (
+                    <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                      <p className="text-sm text-red-800">{cameraError}</p>
+                    </div>
+                  )}
+                  <Button onClick={startScanner}>Activar Cámara</Button>
+                </div>
+              )}
+
+              {/* Scanning state - controls */}
+              {scanning && (
+                <div className="py-4">
+                  <h2 className="text-lg font-semibold text-gray-800 mb-4">
+                    Apunta la cámara al código QR
+                  </h2>
                   <Button variant="secondary" onClick={stopScanner}>
                     Detener Escaneo
                   </Button>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </Card>
         )}
 

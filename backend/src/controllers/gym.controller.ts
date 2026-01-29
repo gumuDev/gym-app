@@ -45,3 +45,17 @@ export const completeSetup = async (req: Request, res: Response): Promise<void> 
     sendServerError(res, error.message);
   }
 };
+
+/**
+ * GET /api/gyms/public-info
+ * Obtener información pública del gym (accesible para miembros)
+ */
+export const getGymPublicInfo = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const gymId = req.gymId!;
+    const gym = await gymService.getGymPublicInfo(gymId);
+    sendSuccess(res, gym);
+  } catch (error: any) {
+    sendServerError(res, error.message);
+  }
+};

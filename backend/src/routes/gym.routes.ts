@@ -35,4 +35,10 @@ router.patch(
  */
 router.post('/me/complete-setup', roleMiddleware(['admin']), gymController.completeSetup);
 
+/**
+ * GET /api/gyms/public-info
+ * Obtener información pública del gym (accesible para members)
+ */
+router.get('/public-info', roleMiddleware(['admin', 'receptionist', 'member']), gymController.getGymPublicInfo);
+
 export default router;

@@ -4,6 +4,13 @@ import { ClientLayout } from '../../../components/layout/ClientLayout';
 import { Card } from '../../../components/ui/Card';
 import { TOKEN_KEY, USER_KEY, API_URL } from '../../../constants/auth';
 
+interface MembershipMember {
+  id: string;
+  member_id: string;
+  price_applied: number;
+  is_primary: boolean;
+}
+
 interface Membership {
   id: string;
   discipline: {
@@ -13,7 +20,9 @@ interface Membership {
   status: 'ACTIVE' | 'EXPIRED' | 'CANCELLED';
   start_date: string;
   end_date: string;
-  amount_paid: number;
+  amount_paid?: number | null; // Opcional para compatibilidad
+  total_amount?: number | null; // Para membresías grupales
+  membershipMembers?: MembershipMember[]; // Para membresías grupales
 }
 
 export const ClientMyMembership = () => {
@@ -48,11 +57,26 @@ export const ClientMyMembership = () => {
       );
 
       const memberships = response.data.data || [];
-      const activeMembership = memberships.find(
+      let activeMembership = memberships.find(
         (m: Membership) => m.status === 'ACTIVE'
       );
 
       if (activeMembership) {
+        // Si es membresía grupal, filtrar solo el membershipMember del usuario actual
+        if (activeMembership.membershipMembers && activeMembership.membershipMembers.length > 0) {
+          const currentMemberData = activeMembership.membershipMembers.find(
+            (mm: MembershipMember) => mm.member_id === memberId
+          );
+
+          if (currentMemberData) {
+            // Crear una copia con solo el membershipMember del usuario actual
+            activeMembership = {
+              ...activeMembership,
+              membershipMembers: [currentMemberData],
+            };
+          }
+        }
+
         setMembership(activeMembership);
 
         // Calculate days remaining
@@ -222,12 +246,41 @@ export const ClientMyMembership = () => {
               <h3 className="font-semibold text-gray-900 mb-3">
                 Información de pago
               </h3>
-              <div className="flex justify-between items-center">
-                <span className="text-gray-600">Monto pagado</span>
-                <span className="text-2xl font-bold text-green-600">
-                  Bs {membership.amount_paid.toLocaleString('es-ES')}
-                </span>
-              </div>
+              {membership.membershipMembers && membership.membershipMembers.length > 0 ? (
+                // Membresía grupal: mostrar precio aplicado al miembro
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">Tu precio</span>
+                    <span className="text-2xl font-bold text-green-600">
+                      Bs {membership.membershipMembers[0].price_applied.toLocaleString('es-ES')}
+                    </span>
+                  </div>
+                  <div className="pt-3 border-t border-gray-200">
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-500">Tipo de membresía</span>
+                      <span className="text-gray-700 font-medium">
+                        Grupal ({membership.membershipMembers.length} {membership.membershipMembers.length === 1 ? 'persona' : 'personas'})
+                      </span>
+                    </div>
+                    {membership.total_amount && (
+                      <div className="flex justify-between items-center text-sm mt-1">
+                        <span className="text-gray-500">Total grupal</span>
+                        <span className="text-gray-700 font-medium">
+                          Bs {membership.total_amount.toLocaleString('es-ES')}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                // Membresía individual (legacy)
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">Monto pagado</span>
+                  <span className="text-2xl font-bold text-green-600">
+                    Bs {(membership.amount_paid || 0).toLocaleString('es-ES')}
+                  </span>
+                </div>
+              )}
             </Card>
 
             {/* Renewal CTA */}

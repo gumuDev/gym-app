@@ -49,16 +49,20 @@ export const AttendancesScanner = () => {
   };
 
   const stopScanner = async () => {
-    if (scannerRef.current && scanning) {
+    if (scannerRef.current) {
       try {
-        await scannerRef.current.stop();
+        // Check if scanner is running before stopping
+        const state = scannerRef.current.getState();
+        if (state === 2) { // 2 = SCANNING state
+          await scannerRef.current.stop();
+        }
         scannerRef.current.clear();
         scannerRef.current = null;
-        setScanning(false);
       } catch (err) {
         console.error('Error stopping scanner:', err);
       }
     }
+    setScanning(false);
   };
 
   const onScanSuccess = async (decodedText: string) => {
@@ -258,13 +262,31 @@ export const AttendancesScanner = () => {
     initScanner();
   }, [scanning]);
 
+  // Cleanup on unmount or when navigating away
   useEffect(() => {
     return () => {
-      // Cleanup on unmount
-      stopScanner();
+      // Force stop scanner on unmount
+      if (scannerRef.current) {
+        try {
+          const state = scannerRef.current.getState();
+          if (state === 2) { // 2 = SCANNING state
+            scannerRef.current.stop().catch(() => {});
+          }
+          scannerRef.current.clear();
+          scannerRef.current = null;
+        } catch (err) {
+          console.error('Error cleaning up scanner:', err);
+        }
+      }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Stop scanner when changing modes
+  useEffect(() => {
+    if (scanMode === 'upload' && scannerRef.current) {
+      stopScanner();
+    }
+  }, [scanMode]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('es-ES', {
@@ -329,9 +351,6 @@ export const AttendancesScanner = () => {
         {/* Scanner Area - Camera Mode */}
         {scanMode === 'camera' && !scanResult && (
           <Card>
-            {/* QR Reader container - ALWAYS in DOM when camera mode is active */}
-            <div id="qr-reader" style={{ display: scanning ? 'block' : 'none' }}></div>
-
             <div className="text-center">
               {/* Initial state - before scanning */}
               {!scanning && (
@@ -352,15 +371,35 @@ export const AttendancesScanner = () => {
                 </div>
               )}
 
-              {/* Scanning state - controls */}
+              {/* Scanning state - header with stop button */}
               {scanning && (
                 <div className="py-4">
-                  <h2 className="text-lg font-semibold text-gray-800 mb-4">
-                    Apunta la cámara al código QR
-                  </h2>
-                  <Button variant="secondary" onClick={stopScanner}>
-                    Detener Escaneo
-                  </Button>
+                  <div className="flex items-center justify-between mb-4 px-4">
+                    <h2 className="text-lg font-semibold text-gray-800">
+                      Apunta la cámara al código QR
+                    </h2>
+                    <Button
+                      variant="secondary"
+                      onClick={stopScanner}
+                      className="bg-red-600 hover:bg-red-700 text-white border-red-600"
+                    >
+                      ⏹ Detener
+                    </Button>
+                  </div>
+
+                  {/* QR Reader container - ALWAYS in DOM when camera mode is active */}
+                  <div id="qr-reader" className="mx-auto"></div>
+
+                  {/* Bottom stop button */}
+                  <div className="mt-6">
+                    <Button
+                      variant="secondary"
+                      onClick={stopScanner}
+                      className="bg-red-600 hover:bg-red-700 text-white border-red-600"
+                    >
+                      ⏹ Detener Cámara
+                    </Button>
+                  </div>
                 </div>
               )}
             </div>

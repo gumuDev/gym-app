@@ -47,3 +47,58 @@ export const renewMembershipSchema = z.object({
     notes: z.string().optional(),
   }),
 });
+
+// ============================================
+// VALIDATORS PARA MEMBRESÍAS GRUPALES
+// ============================================
+
+/**
+ * Validator para crear membresía grupal
+ */
+export const createGroupMembershipSchema = z.object({
+  body: z.object({
+    disciplineId: z.string().uuid('disciplineId debe ser un UUID válido'),
+    pricingPlanId: z.string().uuid('pricingPlanId debe ser un UUID válido'),
+    members: z
+      .array(
+        z.object({
+          memberId: z.string().uuid('memberId debe ser un UUID válido'),
+          isPrimary: z.boolean().optional(),
+        })
+      )
+      .min(1, 'Debe haber al menos un miembro')
+      .max(10, 'Máximo 10 miembros por membresía'),
+    paymentMethod: z.string().optional(),
+    notes: z.string().optional(),
+  }),
+});
+
+/**
+ * Validator para renovar membresía grupal
+ */
+export const renewGroupMembershipSchema = z.object({
+  params: z.object({
+    id: z.string().uuid('ID debe ser un UUID válido'),
+  }),
+  body: z.object({
+    memberIds: z
+      .array(z.string().uuid('Cada memberId debe ser un UUID válido'))
+      .min(1, 'Debe haber al menos un miembro')
+      .max(10, 'Máximo 10 miembros por membresía'),
+    pricingPlanId: z.string().uuid('pricingPlanId debe ser un UUID válido'),
+    paymentMethod: z.string().optional(),
+    notes: z.string().optional(),
+  }),
+});
+
+/**
+ * Validator para cancelar membresía
+ */
+export const cancelMembershipSchema = z.object({
+  params: z.object({
+    id: z.string().uuid('ID debe ser un UUID válido'),
+  }),
+  body: z.object({
+    reason: z.string().optional(),
+  }),
+});

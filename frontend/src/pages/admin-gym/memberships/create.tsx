@@ -107,8 +107,9 @@ export const MembershipsCreate = () => {
 
   useEffect(() => {
     if (formData.discipline_id) {
+      // Filtrar solo planes INDIVIDUALES (num_people = 1) para membresía individual
       const filtered = pricingPlans.filter(
-        (plan) => plan.discipline_id === formData.discipline_id
+        (plan) => plan.discipline_id === formData.discipline_id && plan.num_people === 1
       );
       setFilteredPlans(filtered);
 
@@ -162,7 +163,19 @@ export const MembershipsCreate = () => {
 
       // Relacionar membresías activas con miembros
       const membersWithMemberships = allMembers.map((m: Member) => {
-        const activeMembership = activeMemberships.find((ms: any) => ms.member.id === m.id);
+        // Buscar membresía activa: puede estar en member (individual) o en membershipMembers (grupal)
+        const activeMembership = activeMemberships.find((ms: any) => {
+          // Membresía individual (legacy)
+          if (ms.member && ms.member.id === m.id) {
+            return true;
+          }
+          // Membresía grupal (nueva estructura)
+          if (ms.membershipMembers && Array.isArray(ms.membershipMembers)) {
+            return ms.membershipMembers.some((mm: any) => mm.member_id === m.id);
+          }
+          return false;
+        });
+
         return {
           ...m,
           activeMembership: activeMembership
@@ -698,9 +711,14 @@ export const MembershipsCreate = () => {
               )}
 
               {formData.discipline_id && filteredPlans.length === 0 && (
-                <p className="text-sm text-gray-500">
-                  No hay planes disponibles para esta disciplina
-                </p>
+                <div className="text-center py-8 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <p className="text-sm text-yellow-800 font-medium">
+                    No hay planes individuales disponibles para esta disciplina
+                  </p>
+                  <p className="text-xs text-yellow-600 mt-1">
+                    Por favor, crea un plan individual (1 persona) en la sección de Precios
+                  </p>
+                </div>
               )}
             </div>
 

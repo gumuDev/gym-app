@@ -20,14 +20,23 @@ interface Member {
   created_at: string;
 }
 
+interface GymInfo {
+  id: string;
+  name: string;
+  logo_url?: string;
+  telegram_bot_username?: string;
+}
+
 export const ClientProfile = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [member, setMember] = useState<Member | null>(null);
+  const [gymInfo, setGymInfo] = useState<GymInfo | null>(null);
   const [error, setError] = useState('');
 
   useEffect(() => {
     fetchMemberProfile();
+    fetchGymInfo();
   }, []);
 
   const fetchMemberProfile = async () => {
@@ -54,6 +63,19 @@ export const ClientProfile = () => {
       setError('Error al cargar perfil');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchGymInfo = async () => {
+    try {
+      const token = localStorage.getItem(TOKEN_KEY);
+      const response = await axios.get(`${API_URL}/gyms/public-info`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setGymInfo(response.data.data);
+    } catch (err: any) {
+      console.error('Error fetching gym info:', err);
+      // No mostramos error, solo no mostramos el botón de Telegram
     }
   };
 
@@ -123,7 +145,7 @@ export const ClientProfile = () => {
         </div>
 
         {/* Profile Photo */}
-        <div className="mb-6 text-center">
+        {/* <div className="mb-6 text-center">
           <div className="inline-block relative">
             {member.photo_url ? (
               <img
@@ -140,7 +162,7 @@ export const ClientProfile = () => {
             )}
             <div className="absolute bottom-0 right-0 w-6 h-6 bg-green-500 rounded-full border-2 border-white"></div>
           </div>
-        </div>
+        </div> */}
 
         {/* Personal Info */}
         <Card className="mb-4">
@@ -225,6 +247,35 @@ export const ClientProfile = () => {
             </span>
           </div>
         </Card>
+
+        {/* Telegram Notifications Card */}
+        {gymInfo?.telegram_bot_username && (
+          <Card className="mb-4 bg-gradient-to-r from-blue-50 to-cyan-50 border-l-4 border-blue-500">
+            <div className="flex items-start gap-3">
+              <div className="text-3xl">📱</div>
+              <div className="flex-1">
+                <h3 className="text-sm font-semibold text-blue-900 mb-2 flex items-center">
+                  Notificaciones por Telegram
+                </h3>
+                <p className="text-sm text-blue-800 mb-3">
+                  Recibe alertas sobre el vencimiento de tu membresía directamente en Telegram.
+                </p>
+                <a
+                  href={`https://t.me/${gymInfo.telegram_bot_username}?start=${member.code}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
+                >
+                  <span>📲</span>
+                  Suscribirme a Notificaciones
+                </a>
+                <p className="text-xs text-blue-700 mt-2">
+                  Haz clic para abrir Telegram y vincular tu cuenta
+                </p>
+              </div>
+            </div>
+          </Card>
+        )}
 
         {/* Help Card */}
         <Card className="mb-4 bg-blue-50 border-l-4 border-blue-500">

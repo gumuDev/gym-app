@@ -12,13 +12,6 @@ export const createAttendance = async (gymId: string, memberCode: string, notes?
       code: memberCode,
       gym_id: gymId,
     },
-    include: {
-      memberships: {
-        where: { status: 'ACTIVE' },
-        orderBy: { end_date: 'desc' },
-        take: 1,
-      },
-    },
   });
 
   if (!member) {
@@ -29,8 +22,41 @@ export const createAttendance = async (gymId: string, memberCode: string, notes?
     throw new Error('Miembro inactivo');
   }
 
+  // Buscar membresía activa (individual o grupal)
+  // Primero buscar en membresías individuales (legacy)
+  let activeMembership = await prisma.membership.findFirst({
+    where: {
+      gym_id: gymId,
+      member_id: member.id,
+      status: 'ACTIVE',
+      end_date: { gte: new Date() },
+    },
+    orderBy: { end_date: 'desc' },
+  });
+
+  // Si no se encontró, buscar en membresías grupales (nueva estructura)
+  if (!activeMembership) {
+    const membershipMember = await prisma.membershipMember.findFirst({
+      where: {
+        gym_id: gymId,
+        member_id: member.id,
+        membership: {
+          status: 'ACTIVE',
+          end_date: { gte: new Date() },
+        },
+      },
+      include: {
+        membership: true,
+      },
+      orderBy: { membership: { end_date: 'desc' } },
+    });
+
+    if (membershipMember) {
+      activeMembership = membershipMember.membership;
+    }
+  }
+
   // Verificar si tiene membresía activa
-  const activeMembership = member.memberships[0];
   if (!activeMembership) {
     throw new Error('El miembro no tiene membresía activa');
   }

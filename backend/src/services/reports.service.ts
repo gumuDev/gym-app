@@ -140,7 +140,7 @@ export const getIncomeReport = async (
     });
 
     // Calcular summary
-    const totalIncome = memberships.reduce((sum, m) => sum + m.amount_paid, 0);
+    const totalIncome = memberships.reduce((sum, m) => sum + (m.amount_paid || m.total_amount || 0), 0);
     const totalMemberships = memberships.length;
     const averageTicket = totalMemberships > 0 ? totalIncome / totalMemberships : 0;
 
@@ -150,7 +150,7 @@ export const getIncomeReport = async (
     memberships.forEach((m) => {
       const key = m.discipline_id;
       const existing = byDisciplineMap.get(key) || { name: m.discipline.name, income: 0, count: 0 };
-      existing.income += m.amount_paid;
+      existing.income += m.amount_paid || m.total_amount || 0;
       existing.count += 1;
       byDisciplineMap.set(key, existing);
     });
@@ -169,7 +169,7 @@ export const getIncomeReport = async (
     memberships.forEach((m) => {
       const monthKey = format(new Date(m.created_at), 'MMM yyyy', { locale: es });
       const existing = byMonthMap.get(monthKey) || { income: 0, count: 0 };
-      existing.income += m.amount_paid;
+      existing.income += m.amount_paid || m.total_amount || 0;
       existing.count += 1;
       byMonthMap.set(monthKey, existing);
     });
@@ -183,15 +183,17 @@ export const getIncomeReport = async (
       .sort((a, b) => a.month.localeCompare(b.month));
 
     // Formatear memberships
-    const formattedMemberships = memberships.map((m) => ({
-      id: m.id,
-      date: m.created_at,
-      memberName: m.member.name,
-      memberCode: m.member.code,
-      disciplineName: m.discipline.name,
-      amount: m.amount_paid,
-      paymentMethod: m.payment_method,
-    }));
+    const formattedMemberships = memberships
+      .filter((m) => m.member !== null) // Filtrar membresías grupales sin member directo
+      .map((m) => ({
+        id: m.id,
+        date: m.created_at,
+        memberName: m.member!.name,
+        memberCode: m.member!.code,
+        disciplineName: m.discipline.name,
+        amount: m.amount_paid || m.total_amount || 0,
+        paymentMethod: m.payment_method,
+      }));
 
     return {
       summary: {

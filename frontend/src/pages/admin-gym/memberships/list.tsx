@@ -149,9 +149,8 @@ export const MembershipsList = () => {
 
     return (
       <span
-        className={`px-2 py-1 text-xs font-semibold rounded-full ${
-          badges[status as keyof typeof badges]
-        }`}
+        className={`px-2 py-1 text-xs font-semibold rounded-full ${badges[status as keyof typeof badges]
+          }`}
       >
         {labels[status as keyof typeof labels]}
       </span>
@@ -230,41 +229,37 @@ export const MembershipsList = () => {
         <div className="mt-4 flex flex-wrap gap-2">
           <button
             onClick={() => setFilterStatus('all')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              filterStatus === 'all'
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filterStatus === 'all'
                 ? 'bg-blue-600 text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
+              }`}
           >
             Todas ({memberships.length})
           </button>
           <button
             onClick={() => setFilterStatus('ACTIVE')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              filterStatus === 'ACTIVE'
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filterStatus === 'ACTIVE'
                 ? 'bg-green-600 text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
+              }`}
           >
             Activas ({memberships.filter((m) => m.status === 'ACTIVE').length})
           </button>
           <button
             onClick={() => setFilterStatus('expiring')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              filterStatus === 'expiring'
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filterStatus === 'expiring'
                 ? 'bg-yellow-600 text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
+              }`}
           >
             Por Vencer
           </button>
           <button
             onClick={() => setFilterStatus('EXPIRED')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              filterStatus === 'EXPIRED'
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filterStatus === 'EXPIRED'
                 ? 'bg-red-600 text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
+              }`}
           >
             Vencidas ({memberships.filter((m) => m.status === 'EXPIRED').length})
           </button>
@@ -319,12 +314,12 @@ export const MembershipsList = () => {
 
                       // Determinar si es membresía grupal
                       const isGroup = membership.membershipMembers && membership.membershipMembers.length > 0;
-                      const memberCount = isGroup ? membership.membershipMembers.length : 1;
+                      const memberCount = isGroup ? membership.membershipMembers?.length ?? 1 : 1;
 
                       // Obtener nombre(s) para mostrar
                       let memberDisplay = '';
                       if (isGroup) {
-                        const names = membership.membershipMembers.map(mm => mm.member.name);
+                        const names = membership.membershipMembers?.map(mm => mm.member.name) ?? [];
                         memberDisplay = names.length > 2
                           ? `${names.slice(0, 2).join(', ')} +${names.length - 2}`
                           : names.join(', ');
@@ -344,7 +339,7 @@ export const MembershipsList = () => {
                                 )}
                                 {memberDisplay}
                               </p>
-                              {isGroup && membership.membershipMembers[0] && (
+                              {isGroup && membership.membershipMembers?.[0] && (
                                 <p className="text-xs text-gray-500">{membership.membershipMembers[0].member.code}</p>
                               )}
                               {!isGroup && membership.member && (
@@ -407,7 +402,7 @@ export const MembershipsList = () => {
                                 </svg>
                               </button>
                               <button
-                                onClick={() => push(`/admin-gym/members/show/${membership.member.id}`)}
+                                onClick={() => push(`/admin-gym/members/show/${membership.member?.id}`)}
                                 className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                                 title="Ver QR del Cliente"
                               >
@@ -435,17 +430,17 @@ export const MembershipsList = () => {
 
               // Determinar si es membresía grupal
               const isGroup = membership.membershipMembers && membership.membershipMembers.length > 0;
-              const memberCount = isGroup ? membership.membershipMembers.length : 1;
+              const memberCount = isGroup ? membership.membershipMembers?.length ?? 1 : 1;
 
               // Obtener nombre(s) para mostrar
               let memberDisplay = '';
               let memberCode = '';
               if (isGroup) {
-                const names = membership.membershipMembers.map(mm => mm.member.name);
+                const names = membership.membershipMembers?.map(mm => mm.member.name) ?? [];
                 memberDisplay = names.length > 2
                   ? `${names.slice(0, 2).join(', ')} +${names.length - 2}`
                   : names.join(', ');
-                memberCode = membership.membershipMembers[0]?.member.code || '';
+                memberCode = membership.membershipMembers?.[0]?.member.code || '';
               } else if (membership.member) {
                 memberDisplay = membership.member.name;
                 memberCode = membership.member.code;
@@ -524,7 +519,7 @@ export const MembershipsList = () => {
                     <Button
                       size="sm"
                       variant="secondary"
-                      onClick={() => push(`/admin-gym/members/show/${membership.member.id}`)}
+                      onClick={() => push(`/admin-gym/members/show/${membership.member?.id}`)}
                     >
                       Ver Cliente
                     </Button>

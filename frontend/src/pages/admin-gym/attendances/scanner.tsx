@@ -284,26 +284,28 @@ export const AttendancesScanner = () => {
         </div>
 
         {/* Mode Tabs */}
-        {!scanning && !scanResult && (
+        {!scanResult && (
           <Card className="mb-4">
             <div className="flex border-b border-gray-200">
               <button
                 onClick={() => handleModeChange('camera')}
+                disabled={scanning}
                 className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
                   scanMode === 'camera'
                     ? 'text-green-600 border-b-2 border-green-600 bg-green-50'
                     : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
-                }`}
+                } ${scanning ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
-                📷 Escanear con Cámara
+                📷 {scanning ? 'Escaneando...' : 'Escanear con Cámara'}
               </button>
               <button
                 onClick={() => handleModeChange('upload')}
+                disabled={scanning}
                 className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
                   scanMode === 'upload'
                     ? 'text-green-600 border-b-2 border-green-600 bg-green-50'
                     : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
-                }`}
+                } ${scanning ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 🖼️ Subir Imagen
               </button>
@@ -312,23 +314,44 @@ export const AttendancesScanner = () => {
         )}
 
         {/* Scanner Area - Camera Mode */}
-        {scanMode === 'camera' && !scanning && !scanResult && (
+        {scanMode === 'camera' && !scanResult && (
           <Card>
-            <div className="text-center py-12">
-              <div className="text-6xl mb-4">📷</div>
-              <h2 className="text-xl font-semibold text-gray-800 mb-2">
-                Escanear Código QR
-              </h2>
-              <p className="text-gray-600 mb-6">
-                Activa la cámara para escanear el código QR del cliente
-              </p>
-              {cameraError && (
-                <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-                  <p className="text-sm text-red-800">{cameraError}</p>
+            {/* Hidden container for qr-reader, always present in DOM */}
+            <div
+              id="qr-reader"
+              className={`mx-auto max-w-md rounded-lg overflow-hidden ${
+                scanning ? 'block' : 'hidden'
+              }`}
+            ></div>
+
+            {!scanning ? (
+              <div className="text-center py-12">
+                <div className="text-6xl mb-4">📷</div>
+                <h2 className="text-xl font-semibold text-gray-800 mb-2">
+                  Escanear Código QR
+                </h2>
+                <p className="text-gray-600 mb-6">
+                  Activa la cámara para escanear el código QR del cliente
+                </p>
+                {cameraError && (
+                  <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                    <p className="text-sm text-red-800">{cameraError}</p>
+                  </div>
+                )}
+                <Button onClick={startScanner}>Activar Cámara</Button>
+              </div>
+            ) : (
+              <div className="text-center">
+                <h2 className="text-lg font-semibold text-gray-800 mb-4">
+                  Apunta la cámara al código QR
+                </h2>
+                <div className="mt-6">
+                  <Button variant="secondary" onClick={stopScanner}>
+                    Detener Escaneo
+                  </Button>
                 </div>
-              )}
-              <Button onClick={startScanner}>Activar Cámara</Button>
-            </div>
+              </div>
+            )}
           </Card>
         )}
 
@@ -399,34 +422,6 @@ export const AttendancesScanner = () => {
           </Card>
         )}
 
-        {/* Camera View */}
-        {scanning && (
-          <>
-            <Card className="mb-4">
-              <div className="flex border-b border-gray-200">
-                <div className="flex-1 px-4 py-3 text-sm font-medium text-green-600 border-b-2 border-green-600 bg-green-50 text-center">
-                  📷 Escaneando...
-                </div>
-              </div>
-            </Card>
-            <Card>
-              <div className="text-center">
-                <h2 className="text-lg font-semibold text-gray-800 mb-4">
-                  Apunta la cámara al código QR
-                </h2>
-                <div
-                  id="qr-reader"
-                  className="mx-auto max-w-md rounded-lg overflow-hidden"
-                ></div>
-                <div className="mt-6">
-                  <Button variant="secondary" onClick={stopScanner}>
-                    Detener Escaneo
-                  </Button>
-                </div>
-              </div>
-            </Card>
-          </>
-        )}
 
         {/* Scan Result */}
         {scanResult && !scanning && (
